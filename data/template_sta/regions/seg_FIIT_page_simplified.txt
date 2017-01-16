@@ -1,0 +1,15 @@
+header -3 1867 0 90 A
+top-menu -6 1875 89 51 B
+carousel -10 1877 121 295 C
+side-menu 931 292 414 434 D
+news-tp-cup 640 292 418 427 E
+news-dod 350 292 416 427 F
+down-news 349 873 848 378 G
+about-fiit 1224 288 847 383 H
+contacts 741 395 1230 317 I
+map-location 1140 387 1232 316 J
+logos-and-social 344 395 1230 312 K
+down-menu -4 1868 1525 386 L
+footer -4 1883 1893 88 M
+left-menu -6 346 388 1136 f
+Polygon 1224 638 390 1136 g

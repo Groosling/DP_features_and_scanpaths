@@ -1,0 +1,3 @@
+Index	Time	Dur	XPoint	YPoint	PageName
+1	0	200	0	0	http://ncc.metu.edu.tr/
+2	201	100	1860	85	http://ncc.metu.edu.tr/
