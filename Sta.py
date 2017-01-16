@@ -3,99 +3,14 @@ from stringEditAlgs import *
 from Dataset import *
 from Environment import *
 import json
+from Sequence import *
 
 class Sta:
-    def __init__(self, my_dataset, my_env, max_AOI = 10):
+    def __init__(self, my_dataset, my_env):
         self.my_dataset = my_dataset
         self.my_env = my_env
-        self.max_AOI = max_AOI
 
 
-
-
-    def getCloserAOI(self, Participants_pos, myAoIs, tempAoI):
-        min_distamce =9999
-        closest_AOI = ""
-        temp_distannce = []
-        sums_of_distances = {}
-        for m in range(0, len(tempAoI)):
-            for n in range(0, len(myAoIs)):
-                if tempAoI[m] == myAoIs[n][5]:
-                    temp_distannce = []
-                    # sum distance of all 4 corners
-                    # up, left
-                    temp_distannce.append(sqrt(pow(float(Participants_pos[3]) - float(myAoIs[n][1]), 2) +
-                                               pow(float(Participants_pos[4]) - float(myAoIs[n][3]), 2)))
-                    # up right
-                    temp_distannce.append(sqrt(pow(float(Participants_pos[3]) - (float(myAoIs[n][1]) + float(myAoIs[n][2])), 2) +
-                                               pow(float(Participants_pos[4]) - float(myAoIs[n][3]), 2)))
-                    # down left
-                    temp_distannce.append(sqrt(pow(float(Participants_pos[3]) - (float(myAoIs[n][1])), 2) +
-                                               pow(float(Participants_pos[4]) - (float(myAoIs[n][3]) + float(myAoIs[n][4])), 2)))
-                    # down, right
-                    temp_distannce.append(sqrt(pow(float(Participants_pos[3]) - (float(myAoIs[n][1]) + float(myAoIs[n][2])), 2) +
-                                               pow(float(Participants_pos[4]) - (float(myAoIs[n][3]) + float(myAoIs[n][4])), 2)))
-                    sums_of_distances[tempAoI[m]] = sum(temp_distannce)
-                    break
-        # print "ss"
-        # return key of minimal value in dictionary
-        return min(sums_of_distances, key=sums_of_distances.get)
-
-    def createSequences(self, errorRateArea):
-        Participants  = self.my_dataset.participants
-        myAoIs = self.my_dataset.aois
-        Sequences = {}
-        keys = Participants.keys()
-        for y in range(0, len(keys)):
-            sequence = ""
-            counter = 0
-            for z in range(0, len(Participants[keys[y]])):
-                if counter == self.max_AOI:
-                    break
-                tempAoI = ""
-                tempDuration = 0
-
-                for k in range(0, len(myAoIs)):
-                    if float(Participants[keys[y]][z][3]) >= (float(myAoIs[k][1]) - errorRateArea) and float(
-                            Participants[keys[y]][z][3]) < (
-                    ((float(myAoIs[k][1]) - errorRateArea) + (float(myAoIs[k][2]) + 2 * errorRateArea))) and float(
-                            Participants[keys[y]][z][4]) >= (float(myAoIs[k][3]) - errorRateArea) and float(
-                            Participants[keys[y]][z][4]) < (
-                    ((float(myAoIs[k][3]) - errorRateArea) + (float(myAoIs[k][4]) + 2 * errorRateArea))):
-                        tempAoI = tempAoI + myAoIs[k][5]
-                        tempDuration = int(Participants[keys[y]][z][2])
-                # enormous time complexity
-                # In order to find the closest visual element, the STA algorithm calculates the distances between the fixation and all the points included in the visual elements.
-                # distanceList = []
-                # if len(tempAoI) > 1:
-                #     tempAoI = "(" + tempAoI + ")"
-                #     for m in range(0, len(tempAoI)):
-                #         for n in range(0, len(myAoIs)):
-                #             if tempAoI[m] == myAoIs[n][5]:
-                #                 distance = []
-                #                 for s in range(int(myAoIs[n][1]), int(myAoIs[n][1]) + int(myAoIs[n][2])):
-                #                     for f in range(int(myAoIs[n][3]), int(myAoIs[n][3]) + int(myAoIs[n][4])):
-                #                         distance.append(sqrt(pow(float(Participants[keys[y]][z][3]) - s, 2) + pow(
-                #                             float(Participants[keys[y]][z][4]) - f, 2)))
-                #                 distanceList.append([myAoIs[n][5], min(distance)])
-                #     distanceList.sort(key=lambda x: x[1])
-                #     tempAoI = distanceList[0][0]
-
-                # my solution compare sum of distances to four corners
-                if len(tempAoI) > 1:
-                    tempAoI = self.getCloserAOI(Participants[keys[y]][z],myAoIs, tempAoI)
-
-                if len(tempAoI) != 0:
-                    counter = counter + 1
-                    sequence = sequence + tempAoI + "-" + str(tempDuration) + "."
-                    if counter == self.max_AOI:
-                        break
-
-            Sequences[keys[y]] = sequence
-        return Sequences
-
-    def createCustomSequence(self, Participants):
-        print "createCustomSequence"
 
     def getNumberedSequence(self, Sequence):
         numberedSequence = []
@@ -364,20 +279,14 @@ class Sta:
     def sta_run(self):
         # myErrorRateArea = my_env.get_error_rate_area()
         myErrorRateArea = 0
-        mySequences = self.createSequences( myErrorRateArea)
+        mySequences = createSequences(self.my_dataset, myErrorRateArea)
 
         print "povodne sekvencie"
         for keys,values in mySequences.items():
             print(keys)
             print(values)
 
-        keys = mySequences.keys()
-        for y in range(0, len(keys)):
-            mySequences[keys[y]] = mySequences[keys[y]].split('.')
-            del mySequences[keys[y]][len(mySequences[keys[y]]) - 1]
-        for y in range(0, len(keys)):
-            for z in range(0, len(mySequences[keys[y]])):
-                mySequences[keys[y]][z] = mySequences[keys[y]][z].split('-')
+        mySequences = getArrayRepresentationOfSequence(mySequences)
 
         # First-Pass
         mySequences_num = {}
@@ -424,7 +333,7 @@ class Sta:
     """  ked uz mas custom scanpath """
     def custom_run(self, custom_scanpath):
         myErrorRateArea = self.my_env.get_error_rate_area()
-        mySequences = self.createSequences(myErrorRateArea)
+        mySequences = createSequences(self.my_dataset,myErrorRateArea)
 
         keys = mySequences.keys()
         for y in range(0, len(keys)):
