@@ -1,9 +1,11 @@
 from __future__ import division
-from stringEditAlgs import *
-from Dataset import *
-from Environment import *
+
 import json
-from Sequence import *
+
+from stringEditAlgs import *
+from structure.Dataset import *
+from structure.Environment import *
+from structure.Sequence import *
 
 
 class Sta:

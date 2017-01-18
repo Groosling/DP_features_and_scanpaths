@@ -1,5 +1,6 @@
-import Sequence
 import operator
+
+from structure import Sequence
 
 
 class Position_based_Weighted_Models:

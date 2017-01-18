@@ -1,12 +1,6 @@
-from Dataset import *
-from Environment import *
-from Sta import *
-from Position_based_Weighted_Models import *
-
+from algorithm.Sta import *
+from algorithm.Position_based_Weighted_Models import *
 import time
-
-
-
 if __name__ == "__main__":
     # Storage for all loaded data
 
@@ -51,11 +45,4 @@ if __name__ == "__main__":
     # mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
     # processed_sequence = Sequence.applyFixDurationThreshold(mySequences)
 
-
-
-
-
-
-    #   TODO dorobit nech nemozu byt za sbou dve rovnake pismena v sekvencii
-    #   TODO dorobit nech sa odfiltruju fixacie kratsie ako x ms
 
