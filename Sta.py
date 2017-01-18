@@ -5,6 +5,7 @@ from Environment import *
 import json
 from Sequence import *
 
+
 class Sta:
     def __init__(self, my_dataset, my_env):
         self.my_dataset = my_dataset
@@ -275,8 +276,7 @@ class Sta:
         return json.dumps(ret_dataset)
 
     # STA Algorithm
-    # Preliminary Stage
-    def sta_run(self):
+    def sta_run(self, simplify = False, fixDurThreshold = None):
         # myErrorRateArea = my_env.get_error_rate_area()
         myErrorRateArea = 0
         mySequences = createSequences(self.my_dataset, myErrorRateArea)
@@ -287,6 +287,12 @@ class Sta:
             print(values)
 
         mySequences = getArrayRepresentationOfSequence(mySequences)
+
+        if fixDurThreshold is not None:
+            mySequences = applyFixDurationThreshold(mySequences, fixDurThreshold)
+
+        if simplify:
+            mySequences = simplifySequence(mySequences)
 
         # First-Pass
         mySequences_num = {}

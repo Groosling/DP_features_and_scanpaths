@@ -88,3 +88,52 @@ def getArrayRepresentationOfSequence(mySequences):
             mySequences[keys[y]][z] = mySequences[keys[y]][z].split('-')
     return mySequences
 
+def simplifySequence(aSequence):
+    """
+    Groups same fixation in a row AAABBB ->  AB and sums up the fixDur
+    Args:
+        aSequence: array representation of sequence
+
+    Returns:
+        Processed sequence in array representation
+    """
+    keys = aSequence.keys()
+    for y in range(0, len(keys)):
+        simpleSequence = []
+        lastAOI = "0"
+        for z in range(0, len(aSequence[keys[y]])):
+            if aSequence[keys[y]][z][0] == lastAOI:
+                simpleSequence[len(simpleSequence) - 1][1] = str(int(simpleSequence[len(simpleSequence) - 1][1]) + int(aSequence[keys[y]][z][1]))
+            else:
+                simpleSequence.append([aSequence[keys[y]][z][0], aSequence[keys[y]][z][1]])
+                lastAOI = aSequence[keys[y]][z][0]
+        aSequence[keys[y]] = simpleSequence
+    return aSequence
+
+
+def applyFixDurationThreshold(aSequence, threshold = 80):
+    """
+    Delete fixations shorter than defined threshold
+    Args:
+        aSequence: array representation of sequence
+        threshold: default 80 ms
+
+    Returns:
+        Processed sequence in array representation
+    """
+    keys = aSequence.keys()
+    for y in range(0, len(keys)):
+        proessedArray = []
+        for z in range(0, len(aSequence[keys[y]])):
+            if int(aSequence[keys[y]][z][1]) > threshold:
+                proessedArray.append(aSequence[keys[y]][z])
+        aSequence[keys[y]] = proessedArray
+    return aSequence
+
+
+
+
+
+
+
+

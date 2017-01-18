@@ -13,8 +13,8 @@ if __name__ == "__main__":
     my_dataset = Dataset(
                          # 'data/template_sta/scanpaths/DOD2016_fixations_2_participants.tsv',
                          # 'data/template_sta/scanpaths/DOD2016_fixations.tsv',
-                         # 'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
-                         'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
+                         'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
+                         # 'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
                          # 'data/template_sta/regions/seg_FIIT_page.txt',
                          'data/template_sta/regions/seg_FIIT_page_simplified.txt',
                          'static/images/datasets/template_sta/placeholder.png',
@@ -28,19 +28,34 @@ if __name__ == "__main__":
     start_time = time.time()
 
     sta = Sta(my_dataset, my_env)
+    # bez simpifyingu fubnngovalo lepsie
     sta.sta_run()
     print "aaaaaaaaaaa"
     print("--- %s seconds ---" % (time.time() - start_time))
     """
 
     """ Position-based Weighted Models """
+    """
     pbwm  = Position_based_Weighted_Models(my_dataset)
+    #  po simplifikacii stale rovnako
     result = pbwm.run_PBWM()
     print result
+    """
+
+    # errorRateArea = 0
+    # mySequences = Sequence.createSequences(my_dataset, errorRateArea)
+    # for keys, values in mySequences.items():
+    #     print(keys)
+    #     print(values)
+    #
+    # mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
+    # processed_sequence = Sequence.applyFixDurationThreshold(mySequences)
 
 
 
-    #   TODO  dorobit nech je to samostatna trieda
+
+
+
     #   TODO dorobit nech nemozu byt za sbou dve rovnake pismena v sekvencii
     #   TODO dorobit nech sa odfiltruju fixacie kratsie ako x ms
-    #   TODO sekvencia by mala mat vlastnu triedu s tym ze by tam bolo to create sequence + by sa dala nastavit na minimalna dlzka trvania fixacie
+

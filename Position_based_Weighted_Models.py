@@ -6,7 +6,7 @@ class Position_based_Weighted_Models:
     def __init__(self, my_dataset):
         self.my_dataset = my_dataset
 
-    def run_PBWM(self):
+    def run_PBWM(self, simplify = False, fixDurThreshold = None):
         errorRateArea = 0
         mySequences = Sequence.createSequences(self.my_dataset, errorRateArea)
         for keys, values in mySequences.items():
@@ -14,6 +14,13 @@ class Position_based_Weighted_Models:
             print(values)
 
         mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
+
+        if fixDurThreshold is not None:
+            mySequences = Sequence.applyFixDurationThreshold(mySequences, fixDurThreshold)
+
+        if simplify:
+            mySequences = Sequence.simplifySequence(mySequences)
+
         keys = mySequences.keys()
         # creating dictionary of AOIS
         aois = {}
