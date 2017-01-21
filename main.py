@@ -1,5 +1,6 @@
 from algorithm.Sta import *
 from algorithm.Position_based_Weighted_Models import *
+from algorithm.Dotplot import *
 import time
 if __name__ == "__main__":
     # Storage for all loaded data
@@ -7,8 +8,8 @@ if __name__ == "__main__":
     my_dataset = Dataset(
                          # 'data/template_sta/scanpaths/DOD2016_fixations_2_participants.tsv',
                          # 'data/template_sta/scanpaths/DOD2016_fixations.tsv',
-                         'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
-                         # 'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
+                         # 'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
+                         'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
                          # 'data/template_sta/regions/seg_FIIT_page.txt',
                          'data/template_sta/regions/seg_FIIT_page_simplified.txt',
                          'static/images/datasets/template_sta/placeholder.png',
@@ -35,6 +36,13 @@ if __name__ == "__main__":
     result = pbwm.run_PBWM()
     print result
     """
+
+    """Dotplot"""
+    # """
+    dotplot = Dotplot(my_dataset, my_env)
+    common_sequence = dotplot.runDotplot()
+    print common_sequence
+    # """
 
     # errorRateArea = 0
     # mySequences = Sequence.createSequences(my_dataset, errorRateArea)

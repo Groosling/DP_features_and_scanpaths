@@ -2,7 +2,7 @@ from math import *
 
 
 
-def createSequences(my_dataset, errorRateArea, max_AOI = 10):
+def createSequences(my_dataset, errorRateArea, max_AOI = 100):
         Sequences = {}
         Participants = my_dataset.participants
         myAoIs = my_dataset.aois
@@ -92,7 +92,7 @@ def simplifySequence(aSequence):
     """
     Groups same fixation in a row AAABBB ->  AB and sums up the fixDur
     Args:
-        aSequence: array representation of sequence
+        aSequence: dictionary of array representation of sequences
 
     Returns:
         Processed sequence in array representation
@@ -115,7 +115,7 @@ def applyFixDurationThreshold(aSequence, threshold = 80):
     """
     Delete fixations shorter than defined threshold
     Args:
-        aSequence: array representation of sequence
+        aSequence: dictionary of array representation of sequences
         threshold: default 80 ms
 
     Returns:
@@ -123,12 +123,30 @@ def applyFixDurationThreshold(aSequence, threshold = 80):
     """
     keys = aSequence.keys()
     for y in range(0, len(keys)):
-        proessedArray = []
+        processedArray = []
         for z in range(0, len(aSequence[keys[y]])):
             if int(aSequence[keys[y]][z][1]) > threshold:
-                proessedArray.append(aSequence[keys[y]][z])
-        aSequence[keys[y]] = proessedArray
+                processedArray.append(aSequence[keys[y]][z])
+        aSequence[keys[y]] = processedArray
     return aSequence
+
+def getStringRepresentation(aSequence):
+    """
+    Returns string representation without duration of fixations
+    Args:
+        aSequence: dictionary of array representation of sequeces
+
+    Returns:
+
+    """
+    newDict  = {}
+    keys = aSequence.keys()
+    for y in range(0, len(keys)):
+        sequence = ""
+        for z in range(0, len(aSequence[keys[y]])):
+            sequence = sequence + aSequence[keys[y]][z][0]
+        newDict[keys[y]] = sequence
+    return newDict
 
 
 
