@@ -2,6 +2,7 @@ from algorithm.Sta import *
 from algorithm.Position_based_Weighted_Models import *
 from algorithm.Dotplot import *
 import time
+from structure import Sequence
 if __name__ == "__main__":
     # Storage for all loaded data
 
@@ -24,7 +25,7 @@ if __name__ == "__main__":
 
     sta = Sta(my_dataset, my_env)
     # bez simpifyingu fubnngovalo lepsie
-    sta.sta_run()
+    sta.sta_run(mod = 3)
     print "aaaaaaaaaaa"
     print("--- %s seconds ---" % (time.time() - start_time))
     """
@@ -33,16 +34,24 @@ if __name__ == "__main__":
     """
     pbwm  = Position_based_Weighted_Models(my_dataset)
     #  po simplifikacii stale rovnako
-    result = pbwm.run_PBWM()
+    result = pbwm.run_PBWM(mod=3)
     print result
     """
 
     """Dotplot"""
-    # """
+    """
     dotplot = Dotplot(my_dataset, my_env)
-    common_sequence = dotplot.runDotplot()
+    common_sequence = dotplot.runDotplot(mod=3)
     print common_sequence
-    # """
+    """
+
+    sequence = Sequence.createSequencesBasedOnRelativeAngle(my_dataset)
+    # vec1 = Sequence.calculateVector(0, 0, 2, 2)
+    # vec2 = Sequence.calculateVector(0, 0, 0, 3)
+    # angle = Sequence.calculateAngle(vec1, vec2)
+
+    print "aaa"
+
 
     # errorRateArea = 0
     # mySequences = Sequence.createSequences(my_dataset, errorRateArea)

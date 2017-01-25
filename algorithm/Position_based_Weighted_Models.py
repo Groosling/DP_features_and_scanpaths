@@ -7,9 +7,26 @@ class Position_based_Weighted_Models:
     def __init__(self, my_dataset):
         self.my_dataset = my_dataset
 
-    def run_PBWM(self, simplify = False, fixDurThreshold = None):
+    def run_PBWM(self, simplify = False, fixDurThreshold = None, mod = 1):
+        """
+        Args:
+            simplify: urcuje ci redukovat opakujuce sa fixacie za sebou na jednu
+            fixDurThreshold: minimalna dlzka trvania fixacie
+            mod: 1 vytvori standardny scanpath z AOI
+                 2 vytvori scanpah na zaklade dlzky sakad
+                 3 vytvori scanpath na zaklade dlzky trvania fixacii
+                 4 vytvori scanpath na zaklade relativnych uhlov sakad
+
+        Returns:
+
+        """
         errorRateArea = 0
-        mySequences = Sequence.createSequences(self.my_dataset, errorRateArea)
+        mySequences = {
+              1: Sequence.createSequences(self.my_dataset, errorRateArea),
+              2: Sequence.createSequencesBasedOnDistances(self.my_dataset),
+              3: Sequence.createSequencesBasedOnFixatonDurations(self.my_dataset),
+              4: Sequence.createSequencesBasedOnRelativeAngle(self.my_dataset),
+            }[mod]
         for keys, values in mySequences.items():
             print(keys)
             print(values)

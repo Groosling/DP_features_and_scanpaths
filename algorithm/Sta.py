@@ -278,10 +278,27 @@ class Sta:
         return json.dumps(ret_dataset)
 
     # STA Algorithm
-    def sta_run(self, simplify = False, fixDurThreshold = None):
+    def sta_run(self, simplify=False, fixDurThreshold=None, mod=1):
+        """
+        Args:
+            simplify: urcuje ci redukovat opakujuce sa fixacie za sebou na jednu
+            fixDurThreshold: minimalna dlzka trvania fixacie
+            mod: 1 vytvori standardny scanpath z AOI
+                 2 vytvori scanpah na zaklade dlzky sakad
+                 3 vytvori scanpath na zaklade dlzky trvania fixacii
+                 4 vytvori scanpath na zaklade relativnych uhlov sakad
+
+        Returns:
+
+        """
         # myErrorRateArea = my_env.get_error_rate_area()
         myErrorRateArea = 0
-        mySequences = createSequences(self.my_dataset, myErrorRateArea)
+        mySequences = {
+            1: createSequences(self.my_dataset, myErrorRateArea),
+            2: createSequencesBasedOnDistances(self.my_dataset),
+            3: createSequencesBasedOnFixatonDurations(self.my_dataset),
+            4: createSequencesBasedOnRelativeAngle(self.my_dataset),
+        }[mod]
 
         print "povodne sekvencie"
         for keys,values in mySequences.items():
