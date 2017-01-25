@@ -45,7 +45,7 @@ if __name__ == "__main__":
     print common_sequence
     """
 
-    sequence = Sequence.createSequencesBasedOnRelativeAngle(my_dataset)
+    sequence = Sequence.createSequencesBasedOnAbsoluteAngle(my_dataset)
     # vec1 = Sequence.calculateVector(0, 0, 2, 2)
     # vec2 = Sequence.calculateVector(0, 0, 0, 3)
     # angle = Sequence.calculateAngle(vec1, vec2)

@@ -286,7 +286,8 @@ class Sta:
             mod: 1 vytvori standardny scanpath z AOI
                  2 vytvori scanpah na zaklade dlzky sakad
                  3 vytvori scanpath na zaklade dlzky trvania fixacii
-                 4 vytvori scanpath na zaklade relativnych uhlov sakad
+                 4 vytvori scanpath na zaklade relativnych uhlov sakad0
+                 5 vytvori scanpath na zaklade absolutnych uhlov sakad
 
         Returns:
 
@@ -298,6 +299,7 @@ class Sta:
             2: createSequencesBasedOnDistances(self.my_dataset),
             3: createSequencesBasedOnFixatonDurations(self.my_dataset),
             4: createSequencesBasedOnRelativeAngle(self.my_dataset),
+            5: createSequencesBasedOnAbsoluteAngle(self.my_dataset),
         }[mod]
 
         print "povodne sekvencie"

@@ -16,6 +16,7 @@ class Position_based_Weighted_Models:
                  2 vytvori scanpah na zaklade dlzky sakad
                  3 vytvori scanpath na zaklade dlzky trvania fixacii
                  4 vytvori scanpath na zaklade relativnych uhlov sakad
+                 5 vytvori scanpath na zaklade absolutnych uhlov sakad
 
         Returns:
 
@@ -26,6 +27,7 @@ class Position_based_Weighted_Models:
               2: Sequence.createSequencesBasedOnDistances(self.my_dataset),
               3: Sequence.createSequencesBasedOnFixatonDurations(self.my_dataset),
               4: Sequence.createSequencesBasedOnRelativeAngle(self.my_dataset),
+              5: Sequence.createSequencesBasedOnAbsoluteAngle(self.my_dataset),
             }[mod]
         for keys, values in mySequences.items():
             print(keys)

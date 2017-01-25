@@ -252,7 +252,8 @@ def createSequencesBasedOnRelativeAngle(my_dataset, max_AOI = 100):
     myAoIs = my_dataset.aois
     keys = participants.keys()
     for y in range(0, len(keys)):
-        # TODO vec1 = vec2 at the begiinning of the cycle ... better time complexity
+        # TODO vec1 = vec2 at the beginning of the cycle ... better time complexity
+        # TODO add condition if sequence has two elements or so.. return empty sequence.. depends ond cycle
         sequence = ""
         for z in range(0, min(len(participants[keys[y]]) - 2, max_AOI)):
             # calculates vector between curent point and next one
@@ -268,3 +269,31 @@ def createSequencesBasedOnRelativeAngle(my_dataset, max_AOI = 100):
     return sequences
 
 
+def createSequencesBasedOnAbsoluteAngle(my_dataset, max_AOI = 100):
+    """
+    Create Scanpath from absolute angles of saccades
+    Args:
+        my_dataset: dataset
+        max_AOI: maximal number of return AOI in 1 sequence
+
+    Returns:
+
+    """
+    aoiRange = 30
+    sequences = {}
+    participants = my_dataset.participants
+    myAoIs = my_dataset.aois
+    keys = participants.keys()
+    for y in range(0, len(keys)):
+        sequence = ""
+        for z in range(0, min(len(participants[keys[y]]) - 1, max_AOI)):
+            # calculates vector between curent point and next one
+            vec1 = calculateVector(int(participants[keys[y]][z][3]), int(participants[keys[y]][z][4]),
+                                   int(participants[keys[y]][z + 1][3]), int(participants[keys[y]][z + 1][4]))
+            # default vector (right direction)
+            vec2 = calculateVector(0, 0, 1, 0)
+            angle = calculateAngle(vec1, vec2)
+            # duration is calculated as sum of both sacades durations
+            sequence = sequence + getAOIBasedOnRange(angle, aoiRange) + "-" + str(int(participants[keys[y]][z + 1][1]) - int(participants[keys[y]][z][1])) + "."
+        sequences[keys[y]] = sequence
+    return sequences
