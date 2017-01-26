@@ -3,7 +3,16 @@ from algorithm.Position_based_Weighted_Models import *
 from algorithm.Dotplot import *
 import time
 from structure import Sequence
+from ConfigParser import SafeConfigParser
+import codecs
+
+
 if __name__ == "__main__":
+    parser = SafeConfigParser()
+    # Open the file with the correct encoding
+    with codecs.open('config.ini', 'r', encoding='utf-8') as f:
+        parser.readfp(f)
+
     # Storage for all loaded data
 
     my_dataset = Dataset(
@@ -24,8 +33,8 @@ if __name__ == "__main__":
     start_time = time.time()
 
     sta = Sta(my_dataset, my_env)
-    # bez simpifyingu fubnngovalo lepsie
-    sta.sta_run(mod = 3)
+    # bez simpifyingu fungovalo lepsie
+    sta.sta_run(mod = 5)
     print "aaaaaaaaaaa"
     print("--- %s seconds ---" % (time.time() - start_time))
     """
@@ -34,18 +43,19 @@ if __name__ == "__main__":
     """
     pbwm  = Position_based_Weighted_Models(my_dataset)
     #  po simplifikacii stale rovnako
-    result = pbwm.run_PBWM(mod=3)
+    result = pbwm.run_PBWM(mod=5)
     print result
     """
 
     """Dotplot"""
     """
     dotplot = Dotplot(my_dataset, my_env)
-    common_sequence = dotplot.runDotplot(mod=3)
+    common_sequence = dotplot.runDotplot(mod=5)
     print common_sequence
     """
 
-    sequence = Sequence.createSequencesBasedOnAbsoluteAngle(my_dataset)
+    # sequence = Sequence.createSequencesBasedOnVisualElements(my_dataset)
+    # password = parser.get('bug_tracker', 'password')
     # vec1 = Sequence.calculateVector(0, 0, 2, 2)
     # vec2 = Sequence.calculateVector(0, 0, 0, 3)
     # angle = Sequence.calculateAngle(vec1, vec2)

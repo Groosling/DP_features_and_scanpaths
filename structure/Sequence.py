@@ -1,8 +1,16 @@
 from math import *
+from ConfigParser import SafeConfigParser
+import codecs
 
 AOIS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+parser = SafeConfigParser()
+# Open the file with the correct encoding
+with codecs.open('config.ini', 'r', encoding='utf-8') as f:
+    parser.readfp(f)
 
-def createSequences(my_dataset, errorRateArea, max_AOI = 10):
+def createSequencesBasedOnVisualElements(my_dataset):
+    max_AOI = int(parser.get('sequence', 'maxAoi'))
+    errorRateArea = int(parser.get('sequence', 'errorRateArea'))
     Sequences = {}
     Participants = my_dataset.participants
     myAoIs = my_dataset.aois
@@ -148,18 +156,17 @@ def getStringRepresentation(aSequence):
         newDict[keys[y]] = sequence
     return newDict
 
-def createSequencesBasedOnDistances(my_dataset, max_AOI = 100):
+def createSequencesBasedOnDistances(my_dataset):
     """
     Create Scanpath from sacade lengths(distances between fixations)
     Args:
         my_dataset: dataset
-        max_AOI: maximal number of return AOI in 1 sequence
 
     Returns:
 
     """
-    # TODO aoiRange ako argument vo vsetkych create Sequence
-    aoiRange = 300
+    aoiRange = int(parser.get('aoiRange', 'saccadeLength'))
+    max_AOI = int(parser.get('sequence', 'maxAoi'))
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
@@ -191,17 +198,16 @@ def getAOIBasedOnRange(value, aoiRange):
     """
     return AOIS[int(value / aoiRange)]
 
-def createSequencesBasedOnFixatonDurations(my_dataset, max_AOI = 100):
+def createSequencesBasedOnFixatonDurations(my_dataset):
     """
     Create Scanpath from fixations duration
     Args:
         my_dataset: dataset
-        max_AOI: maximal number of return AOI in 1 sequence
-
     Returns:
 
     """
-    aoiRange = 100 # in ms
+    aoiRange = int(parser.get('aoiRange', 'fixationDuration'))
+    max_AOI = int(parser.get('sequence', 'maxAoi'))
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
@@ -236,17 +242,16 @@ def calculateAngle(vect1, vect2):
     return degrees(acos(dotProduct / (vect1Size * vect2Size)))
 
 
-def createSequencesBasedOnRelativeAngle(my_dataset, max_AOI = 100):
+def createSequencesBasedOnRelativeAngle(my_dataset):
     """
     Create Scanpath from absolute angles of saccades
     Args:
         my_dataset: dataset
-        max_AOI: maximal number of return AOI in 1 sequence
-
     Returns:
 
     """
-    aoiRange = 30
+    aoiRange = int(parser.get('aoiRange', 'relativeAngle'))
+    max_AOI = int(parser.get('sequence', 'maxAoi'))
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
@@ -269,17 +274,17 @@ def createSequencesBasedOnRelativeAngle(my_dataset, max_AOI = 100):
     return sequences
 
 
-def createSequencesBasedOnAbsoluteAngle(my_dataset, max_AOI = 100):
+def createSequencesBasedOnAbsoluteAngle(my_dataset):
     """
     Create Scanpath from absolute angles of saccades
     Args:
         my_dataset: dataset
-        max_AOI: maximal number of return AOI in 1 sequence
 
     Returns:
 
     """
-    aoiRange = 30
+    aoiRange = int(parser.get('aoiRange', 'absoluteAngle'))
+    max_AOI = int(parser.get('sequence', 'maxAoi'))
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
@@ -297,3 +302,28 @@ def createSequencesBasedOnAbsoluteAngle(my_dataset, max_AOI = 100):
             sequence = sequence + getAOIBasedOnRange(angle, aoiRange) + "-" + str(int(participants[keys[y]][z + 1][1]) - int(participants[keys[y]][z][1])) + "."
         sequences[keys[y]] = sequence
     return sequences
+
+def createSequences(my_dataset, mod):
+    """
+    Based on mod creates sequences from dataset
+    Args:
+        my_dataset: dataset
+        mod:     1 vytvori standardny scanpath z AOI
+                 2 vytvori scanpah na zaklade dlzky sakad
+                 3 vytvori scanpath na zaklade dlzky trvania fixacii
+                 4 vytvori scanpath na zaklade relativnych uhlov sakad0
+                 5 vytvori scanpath na zaklade absolutnych uhlov sakad
+
+    Returns:
+
+    """
+
+    case = {
+      1: createSequencesBasedOnVisualElements,
+      2: createSequencesBasedOnDistances,
+      3: createSequencesBasedOnFixatonDurations,
+      4: createSequencesBasedOnRelativeAngle,
+      5: createSequencesBasedOnAbsoluteAngle,
+    }
+    myFunc = case[mod]
+    return myFunc(my_dataset)

@@ -292,15 +292,7 @@ class Sta:
         Returns:
 
         """
-        # myErrorRateArea = my_env.get_error_rate_area()
-        myErrorRateArea = 0
-        mySequences = {
-            1: createSequences(self.my_dataset, myErrorRateArea),
-            2: createSequencesBasedOnDistances(self.my_dataset),
-            3: createSequencesBasedOnFixatonDurations(self.my_dataset),
-            4: createSequencesBasedOnRelativeAngle(self.my_dataset),
-            5: createSequencesBasedOnAbsoluteAngle(self.my_dataset),
-        }[mod]
+        mySequences = createSequences(self.my_dataset, mod)
 
         print "povodne sekvencie"
         for keys,values in mySequences.items():
@@ -360,7 +352,7 @@ class Sta:
     """  ked uz mas custom scanpath """
     def custom_run(self, custom_scanpath):
         myErrorRateArea = self.my_env.get_error_rate_area()
-        mySequences = createSequences(self.my_dataset,myErrorRateArea)
+        mySequences = createSequencesBasedOnVisualElements(self.my_dataset, myErrorRateArea)
 
         keys = mySequences.keys()
         for y in range(0, len(keys)):

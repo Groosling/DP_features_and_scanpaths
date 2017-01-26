@@ -110,14 +110,8 @@ class Dotplot:
         Returns:
 
         """
-        errorRateArea = 0
-        mySequences = {
-              1: Sequence.createSequences(self.my_dataset, errorRateArea),
-              2: Sequence.createSequencesBasedOnDistances(self.my_dataset),
-              3: Sequence.createSequencesBasedOnFixatonDurations(self.my_dataset),
-              4: Sequence.createSequencesBasedOnRelativeAngle(self.my_dataset),
-              5: Sequence.createSequencesBasedOnAbsoluteAngle(self.my_dataset),
-            }[mod]
+
+        mySequences = Sequence.createSequences(self.my_dataset, mod)
 
         # mySequences = Sequence.createSequences(self.my_dataset, errorRateArea)
         for keys, values in mySequences.items():
