@@ -58,7 +58,6 @@ class Dataset:
                     self.YPOINT_INDEX = column_captions.index("FixationPointY (MCSpx)")
                     self.PAGE_NAME_INDEX = column_captions.index("MediaName")
                     self.PARTICIPANT_NAME_INDEX = column_captions.index("ParticipantName")
-                    #  TODO find specific column this way a contruct needed structure
                 else:
 
                     try:

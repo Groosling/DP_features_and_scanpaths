@@ -5,6 +5,8 @@ import time
 from structure import Sequence
 from ConfigParser import SafeConfigParser
 import codecs
+from featureExtraction import BasicFeatures
+
 
 
 if __name__ == "__main__":
@@ -54,8 +56,10 @@ if __name__ == "__main__":
     print common_sequence
     """
 
-    # sequence = Sequence.createSequencesBasedOnVisualElements(my_dataset)
-    # password = parser.get('bug_tracker', 'password')
+    sequence = Sequence.createSequences(my_dataset, mod=1)
+    sequence = Sequence.getArrayRepresentationOfSequence(sequence)
+    result = BasicFeatures.calculateBasicFeatures(my_dataset.participants)
+
     # vec1 = Sequence.calculateVector(0, 0, 2, 2)
     # vec2 = Sequence.calculateVector(0, 0, 0, 3)
     # angle = Sequence.calculateAngle(vec1, vec2)
