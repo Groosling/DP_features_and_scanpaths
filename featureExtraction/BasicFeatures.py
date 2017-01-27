@@ -32,7 +32,7 @@ def getFixationDuration(participant):
     """
     result = []
     for z in range(0, len(participant)):
-        result.append(participant[z][2])
+        result.append(float(participant[z][2]))
     return result
 
 

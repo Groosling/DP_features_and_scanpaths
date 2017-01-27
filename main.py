@@ -6,6 +6,7 @@ from structure import Sequence
 from ConfigParser import SafeConfigParser
 import codecs
 from featureExtraction import BasicFeatures
+from featureExtraction import AgregatedFeatures
 
 
 
@@ -58,7 +59,8 @@ if __name__ == "__main__":
 
     sequence = Sequence.createSequences(my_dataset, mod=1)
     sequence = Sequence.getArrayRepresentationOfSequence(sequence)
-    result = BasicFeatures.calculateBasicFeatures(my_dataset.participants)
+    basicFeatures = BasicFeatures.calculateBasicFeatures(my_dataset.participants)
+    result = AgregatedFeatures.calculateAgregatedFeatures(basicFeatures)
 
     # vec1 = Sequence.calculateVector(0, 0, 2, 2)
     # vec2 = Sequence.calculateVector(0, 0, 0, 3)
