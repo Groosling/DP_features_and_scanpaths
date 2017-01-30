@@ -7,7 +7,7 @@ from ConfigParser import SafeConfigParser
 import codecs
 from featureExtraction import BasicFeatures
 from featureExtraction import AgregatedFeatures
-
+from featureExtraction.AoiFeatures import *
 
 
 if __name__ == "__main__":
@@ -57,14 +57,17 @@ if __name__ == "__main__":
     print common_sequence
     """
 
-    sequence = Sequence.createSequences(my_dataset, mod=1)
-    sequence = Sequence.getArrayRepresentationOfSequence(sequence)
-    basicFeatures = BasicFeatures.calculateBasicFeatures(my_dataset.participants)
-    result = AgregatedFeatures.calculateAgregatedFeatures(basicFeatures)
+    # sequence = Sequence.createSequences(my_dataset, mod=1)
+    # sequence = Sequence.getArrayRepresentationOfSequence(sequence)
+    # basicFeatures = BasicFeatures.calculateBasicFeatures(my_dataset.participants)
+    # result = AgregatedFeatures.calculateAgregatedFeatures(basicFeatures)
 
     # vec1 = Sequence.calculateVector(0, 0, 2, 2)
     # vec2 = Sequence.calculateVector(0, 0, 0, 3)
     # angle = Sequence.calculateAngle(vec1, vec2)
+    aoisFeatures = AoiFeatures()
+    participantsWithAois = aoisFeatures.createParitcipantsWithAois(my_dataset)
+    result = aoisFeatures.getAoiFeatures(participantsWithAois)
 
     print "aaa"
 
