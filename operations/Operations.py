@@ -1,5 +1,7 @@
 from math import *
 
+AOIS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
 def calculateDistance(xStart, yStart, xEnd, yEnd):
     """
     Calculate distance of 2D coordinates.
@@ -25,4 +27,19 @@ def calculateAngle(vect1, vect2):
     vect1Size = calculateDistance(0, 0, vect1[0], vect1[1])
     vect2Size = calculateDistance(0, 0, vect2[0], vect2[1])
     dotProduct = (vect1[0] * vect2[0]) + (vect1[1] * vect2[1])
-    return degrees(acos(dotProduct / (vect1Size * vect2Size)))
+
+    try:
+        return degrees(acos(dotProduct / (vect1Size * vect2Size)))
+    except:
+        return 0
+
+def getAOIBasedOnRange(value, aoiRange):
+    """
+    Determine AOI based on range
+    Args:
+        value: distance between fixations
+        range: range of distance for single AOI
+
+    Returns: character representation of AOI
+    """
+    return AOIS[int(value / aoiRange)]

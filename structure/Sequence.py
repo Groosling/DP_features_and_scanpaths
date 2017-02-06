@@ -3,7 +3,6 @@ from ConfigParser import SafeConfigParser
 import codecs
 from operations.Operations import *
 
-AOIS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 parser = SafeConfigParser()
 # Open the file with the correct encoding
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
@@ -181,17 +180,6 @@ def createSequencesBasedOnDistances(my_dataset):
         sequences[keys[y]] = sequence
     return sequences
 
-
-def getAOIBasedOnRange(value, aoiRange):
-    """
-    Determine AOI based on range
-    Args:
-        value: distance between fixations
-        range: range of distance for single AOI
-
-    Returns: character representation of AOI
-    """
-    return AOIS[int(value / aoiRange)]
 
 def createSequencesBasedOnFixatonDurations(my_dataset):
     """

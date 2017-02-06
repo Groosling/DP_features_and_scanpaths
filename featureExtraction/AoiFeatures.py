@@ -120,7 +120,7 @@ class AoiFeatures:
 
     def getTimeToFirstFixation(self, paritcipantsWithAois):
        print "aaa"
-       # TODO ... dicutable
+       # TODO ... discutable
 
     def getAoiFeatures(self, paritcipantsWithAois):
         # result = self.getTotalNumberOfFixationOnAOi(paritcipantsWithAois)

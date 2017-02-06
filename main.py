@@ -8,7 +8,7 @@ import codecs
 from featureExtraction import BasicFeatures
 from featureExtraction import AgregatedFeatures
 from featureExtraction.AoiFeatures import *
-
+from featureExtraction.AngleFeatures import *
 
 if __name__ == "__main__":
     parser = SafeConfigParser()
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     sta = Sta(my_dataset, my_env)
     # bez simpifyingu fungovalo lepsie
     sta.sta_run(mod = 5)
-    print "aaaaaaaaaaa"
+    # print "aaaaaaaaaaa"
     print("--- %s seconds ---" % (time.time() - start_time))
     """
 
@@ -65,10 +65,11 @@ if __name__ == "__main__":
     # vec1 = Sequence.calculateVector(0, 0, 2, 2)
     # vec2 = Sequence.calculateVector(0, 0, 0, 3)
     # angle = Sequence.calculateAngle(vec1, vec2)
-    aoisFeatures = AoiFeatures()
-    participantsWithAois = aoisFeatures.createParitcipantsWithAois(my_dataset)
-    result = aoisFeatures.getAoiFeatures(participantsWithAois)
-
+    # aoisFeatures = AoiFeatures()
+    # participantsWithAois = aoisFeatures.createParitcipantsWithAois(my_dataset)
+    # result = aoisFeatures.getAoiFeatures(participantsWithAois)
+    angleFeatures = AngleFeatures()
+    angleFeatures.getAngleFeatures(my_dataset)
     print "aaa"
 
 
