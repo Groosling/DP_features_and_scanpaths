@@ -9,7 +9,7 @@ def calculateBasicFeatures(participants):
     Dictionary of participants containing dictionary of no agregated basic features
     """
     result = {}
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         result[keys[y]] = {}
         result[keys[y]]['fixationCount'] = len(participants[keys[y]])

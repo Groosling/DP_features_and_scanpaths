@@ -1,9 +1,9 @@
 from math import *
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 import codecs
 from operations.Operations import *
 
-parser = SafeConfigParser()
+parser = ConfigParser()
 # Open the file with the correct encoding
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     parser.readfp(f)
@@ -14,7 +14,7 @@ def createSequencesBasedOnVisualElements(my_dataset):
     Sequences = {}
     Participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = Participants.keys()
+    keys = list(Participants)
     for y in range(0, len(keys)):
         sequence = ""
         counter = 0
@@ -85,7 +85,7 @@ def getArrayRepresentationOfSequence(mySequences):
     Returns: array representation of sequence
 
     """
-    keys = mySequences.keys()
+    keys = list(mySequences)
     # odstranenie bodky na konci
     for y in range(0, len(keys)):
         mySequences[keys[y]] = mySequences[keys[y]].split('.')
@@ -105,7 +105,7 @@ def simplifySequence(aSequence):
     Returns:
         Processed sequence in array representation
     """
-    keys = aSequence.keys()
+    keys = list(aSequence)
     for y in range(0, len(keys)):
         simpleSequence = []
         lastAOI = "0"
@@ -129,7 +129,7 @@ def applyFixDurationThreshold(aSequence, threshold = 80):
     Returns:
         Processed sequence in array representation
     """
-    keys = aSequence.keys()
+    keys = list(aSequence)
     for y in range(0, len(keys)):
         processedArray = []
         for z in range(0, len(aSequence[keys[y]])):
@@ -148,7 +148,7 @@ def getStringRepresentation(aSequence):
 
     """
     newDict  = {}
-    keys = aSequence.keys()
+    keys = list(aSequence)
     for y in range(0, len(keys)):
         sequence = ""
         for z in range(0, len(aSequence[keys[y]])):
@@ -166,11 +166,12 @@ def createSequencesBasedOnDistances(my_dataset):
 
     """
     aoiRange = int(parser.get('aoiRange', 'saccadeLength'))
+    print(parser.get('sequence', 'maxAoi'))
     max_AOI = int(parser.get('sequence', 'maxAoi'))
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         sequence = ""
         for z in range(0, min(len(participants[keys[y]]) - 1, max_AOI)):
@@ -194,7 +195,7 @@ def createSequencesBasedOnFixatonDurations(my_dataset):
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         sequence = ""
         for z in range(0, min(len(participants[keys[y]]) - 1, max_AOI)):
@@ -218,7 +219,7 @@ def createSequencesBasedOnRelativeAngle(my_dataset):
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         # TODO vec1 = vec2 at the beginning of the cycle ... better time complexity
         # TODO add condition if sequence has two elements or so.. return empty sequence.. depends ond cycle
@@ -251,7 +252,7 @@ def createSequencesBasedOnAbsoluteAngle(my_dataset):
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         sequence = ""
         for z in range(0, min(len(participants[keys[y]]) - 1, max_AOI)):
@@ -274,7 +275,7 @@ def createSequences(my_dataset, mod):
         mod:     1 vytvori standardny scanpath z AOI
                  2 vytvori scanpah na zaklade dlzky sakad
                  3 vytvori scanpath na zaklade dlzky trvania fixacii
-                 4 vytvori scanpath na zaklade relativnych uhlov sakad0
+                 4 vytvori scanpath na zaklade relativnych uhlov sakad
                  5 vytvori scanpath na zaklade absolutnych uhlov sakad
 
     Returns:

@@ -35,7 +35,7 @@ class Position_based_Weighted_Models:
         if simplify:
             mySequences = Sequence.simplifySequence(mySequences)
 
-        keys = mySequences.keys()
+        keys = list(mySequences)
         # creating dictionary of AOIS
         aois = {}
         for item in self.my_dataset.aois:

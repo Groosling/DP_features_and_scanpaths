@@ -1,10 +1,10 @@
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 import codecs
 from operations.Operations import *
 
 import numpy as np
 
-parser = SafeConfigParser()
+parser = ConfigParser()
 # Open the file with the correct encoding
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     parser.readfp(f)
@@ -32,7 +32,7 @@ class AngleFeatures:
         angleParticipants = {}
         participants = my_dataset.participants
         myAoIs = my_dataset.aois
-        keys = participants.keys()
+        keys = list(participants)
         for y in range(0, len(keys)):
             aois = {}
             for z in range(0, self.aoiCount):
@@ -69,7 +69,7 @@ class AngleFeatures:
         angleParticipants = {}
         participants = my_dataset.participants
         myAoIs = my_dataset.aois
-        keys = participants.keys()
+        keys = list(participants)
         for y in range(0, len(keys)):
             aois = {}
             for z in range(0, self.aoiCount):
@@ -101,15 +101,15 @@ class AngleFeatures:
 
         """
         result = {}
-        keys = angleParticipants.keys()
+        keys = list(angleParticipants)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
                 sum = 0
                 for k in range(0, len(angleParticipants[keys[y]][self.aois[z]])):
                     sum = sum + int(angleParticipants[keys[y]][self.aois[z]][k])
-                list.append(sum)
-            result[keys[y]] = list
+                tempList.append(sum)
+            result[keys[y]] = tempList
         return result
 
     def getFixationsCount(self, angleParticipants):
@@ -122,15 +122,15 @@ class AngleFeatures:
 
         """
         result = {}
-        keys = angleParticipants.keys()
+        keys = list(angleParticipants)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
                 count = 0
                 for k in range(0, len(angleParticipants[keys[y]][self.aois[z]])):
                     count = count + 1
-                list.append(count)
-            result[keys[y]] = list
+                tempList.append(count)
+            result[keys[y]] = tempList
         return result
 
     def getMaxFixLength(self, angleParticipants):
@@ -144,13 +144,13 @@ class AngleFeatures:
 
         """
         result = {}
-        keys = angleParticipants.keys()
+        keys = list(angleParticipants)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
                 maxVal = max(angleParticipants[keys[y]][self.aois[z]] or [0])
-                list.append(maxVal)
-            result[keys[y]] = list
+                tempList.append(maxVal)
+            result[keys[y]] = tempList
         return result
     def getMinFixLength(self, angleParticipants):
         """
@@ -163,13 +163,13 @@ class AngleFeatures:
 
         """
         result = {}
-        keys = angleParticipants.keys()
+        keys = list(angleParticipants)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
                 minVal = min(angleParticipants[keys[y]][self.aois[z]] or [0])
-                list.append(minVal)
-            result[keys[y]] = list
+                tempList.append(minVal)
+            result[keys[y]] = tempList
         return result
 
     def getAvgFixLength(self, angleParticipants):
@@ -183,13 +183,13 @@ class AngleFeatures:
 
         """
         result = {}
-        keys = angleParticipants.keys()
+        keys = list(angleParticipants)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
                 meanVal = np.mean(angleParticipants[keys[y]][self.aois[z]] or [0])
-                list.append(meanVal)
-            result[keys[y]] = list
+                tempList.append(meanVal)
+            result[keys[y]] = tempList
         return result
 
     def getAngleFeatures(self, my_dataset):
@@ -200,13 +200,13 @@ class AngleFeatures:
         angleFeatures.append(self.getMaxFixLength(absAngleParticipants))
         angleFeatures.append(self.getMinFixLength(absAngleParticipants))
         angleFeatures.append(self.getAvgFixLength(absAngleParticipants))
-        keys = absAngleParticipants.keys()
+        keys = list(absAngleParticipants)
         allFeatures = {}
         for y in range(0, len(keys)):
             allFeatures[keys[y]] = []
         for k in range(0, len(angleFeatures)):
             for y in range(0, len(keys)):
-                list = []
+
                 allFeatures[keys[y]].extend(angleFeatures[k][keys[y]])
 
         relAbsAngleParticipants = self.getRelativeAngleHistogram(my_dataset)

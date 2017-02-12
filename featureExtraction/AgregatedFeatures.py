@@ -1,10 +1,10 @@
 # TODO add fixaton count and fixation rate...
 # TODO allow cuting down length of the sequences .. to enable proper using of sum function
 import numpy as np
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 import codecs
 
-config = SafeConfigParser()
+config = ConfigParser()
 # Open the file with the correct encoding
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     config.readfp(f)
@@ -24,13 +24,13 @@ def calculateAgregatedFeatures(basicFeatures):
     stdBool = bool(int(config.get('aggregFeatures', 'std')))
 
     participants = []
-    keys = basicFeatures.keys()
+    keys = list(basicFeatures)
     for y in range(0, len(keys)):
         features = []
         for z in range(0, len(listOfFeatures)):
 
             #  if given basic featue doesn't exists, ignore it
-            if listOfFeatures[z] not in basicFeatures[keys[y]].keys():
+            if listOfFeatures[z] not in basicFeatures[list(keys[y])]:
                 continue
 
             if sumBool:

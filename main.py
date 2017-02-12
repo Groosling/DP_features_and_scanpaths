@@ -3,7 +3,7 @@ from algorithm.Position_based_Weighted_Models import *
 from algorithm.Dotplot import *
 import time
 from structure import Sequence
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 import codecs
 from featureExtraction import BasicFeatures
 from featureExtraction import AgregatedFeatures
@@ -11,7 +11,7 @@ from featureExtraction.AoiFeatures import *
 from featureExtraction.AngleFeatures import *
 
 if __name__ == "__main__":
-    parser = SafeConfigParser()
+    parser = ConfigParser()
     # Open the file with the correct encoding
     with codecs.open('config.ini', 'r', encoding='utf-8') as f:
         parser.readfp(f)
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     sta = Sta(my_dataset, my_env)
     # bez simpifyingu fungovalo lepsie
-    sta.sta_run(mod = 5)
+    sta.sta_run(simplify=True,mod=2)
     # print "aaaaaaaaaaa"
     print("--- %s seconds ---" % (time.time() - start_time))
     """
@@ -47,15 +47,15 @@ if __name__ == "__main__":
     pbwm  = Position_based_Weighted_Models(my_dataset)
     #  po simplifikacii stale rovnako
     result = pbwm.run_PBWM(mod=5)
-    print result
+    print (result)
     """
 
     """Dotplot"""
-    """
+    # """
     dotplot = Dotplot(my_dataset, my_env)
-    common_sequence = dotplot.runDotplot(mod=5)
-    print common_sequence
-    """
+    common_sequence = dotplot.runDotplot(simplify=True, mod=3)
+    print (common_sequence)
+    # """
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
     # sequence = Sequence.getArrayRepresentationOfSequence(sequence)
@@ -68,9 +68,9 @@ if __name__ == "__main__":
     # aoisFeatures = AoiFeatures()
     # participantsWithAois = aoisFeatures.createParitcipantsWithAois(my_dataset)
     # result = aoisFeatures.getAoiFeatures(participantsWithAois)
-    angleFeatures = AngleFeatures()
-    angleFeatures.getAngleFeatures(my_dataset)
-    print "aaa"
+    # angleFeatures = AngleFeatures()
+    # angleFeatures.getAngleFeatures(my_dataset)
+    print ("aaa")
 
 
     # errorRateArea = 0

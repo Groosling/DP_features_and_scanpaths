@@ -66,7 +66,7 @@ class Dotplot:
         Returns:
 
         """
-        keys = stringSequences.keys()
+        keys = list(stringSequences)
         while len(keys) > 1:
             commonSequences = []
             for y in range(0, len(keys)):
@@ -91,7 +91,7 @@ class Dotplot:
             del stringSequences[commonSequences[0][0]]
             del stringSequences[commonSequences[0][1]]
             stringSequences[commonSequences[0][0] + commonSequences[0][1]] = commonSequences[0][2]
-            keys = stringSequences.keys()
+            keys = list(stringSequences)
         return stringSequences[keys[0]]
 
 

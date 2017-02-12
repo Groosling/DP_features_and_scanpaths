@@ -1,12 +1,12 @@
 from structure import Sequence
 
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 import codecs
 from operations.Operations import *
 
 import numpy as np
 
-parser = SafeConfigParser()
+parser = ConfigParser()
 # Open the file with the correct encoding
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     parser.readfp(f)
@@ -31,7 +31,7 @@ class AoiFeatures:
         paritcipantsWithAois = {}
         participants = my_dataset.participants
         myAoIs = my_dataset.aois
-        keys = participants.keys()
+        keys = list(participants)
         for y in range(0, len(keys)):
             paritcipantsWithAois[keys[y]] = {}
             paritcipantsWithAois[keys[y]]["first_fixation"] = participants[keys[y]][0]
@@ -67,59 +67,59 @@ class AoiFeatures:
 
     def getTotalNumberOfFixationOnAOi(self, paritcipantsWithAois):
         result = {}
-        keys = paritcipantsWithAois.keys()
+        keys = list(paritcipantsWithAois)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
-                list.append(len(paritcipantsWithAois[keys[y]][self.aois[z]]))
-            result[keys[y]] = list
+                tempList.append(len(paritcipantsWithAois[keys[y]][self.aois[z]]))
+            result[keys[y]] = tempList
         return result
 
     def getSumFixDuration(self, paritcipantsWithAois):
         result = {}
-        keys = paritcipantsWithAois.keys()
+        keys = list(paritcipantsWithAois)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
                 sum = 0
                 for k in range(0, len(paritcipantsWithAois[keys[y]][self.aois[z]])):
                     sum = sum + int(paritcipantsWithAois[keys[y]][self.aois[z]][k][1])
-                list.append(sum)
-            result[keys[y]] = list
+                tempList.append(sum)
+            result[keys[y]] = tempList
         return result
 
     def getMeanFixDuration(self, paritcipantsWithAois):
         result = {}
-        keys = paritcipantsWithAois.keys()
+        keys = list(paritcipantsWithAois)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
                 sum = 0
                 for k in range(0, len(paritcipantsWithAois[keys[y]][self.aois[z]])):
                     sum = sum + int(paritcipantsWithAois[keys[y]][self.aois[z]][k][1])
                 if len(paritcipantsWithAois[keys[y]][self.aois[z]]) != 0:
-                    list.append(sum / len(paritcipantsWithAois[keys[y]][self.aois[z]]))
+                    tempList.append(sum / len(paritcipantsWithAois[keys[y]][self.aois[z]]))
                 else:
-                    list.append(0)
-            result[keys[y]] = list
+                    tempList.append(0)
+            result[keys[y]] = tempList
         return result
 
     def getLongestFixDuration(self, paritcipantsWithAois):
         result = {}
-        keys = paritcipantsWithAois.keys()
+        keys = list(paritcipantsWithAois)
         for y in range(0, len(keys)):
-            list = []
+            tempList = []
             for z in range(0, len(self.aois)):
                 max = 0
                 for k in range(0, len(paritcipantsWithAois[keys[y]][self.aois[z]])):
                     if int(paritcipantsWithAois[keys[y]][self.aois[z]][k][1]) > max:
                         max = int(paritcipantsWithAois[keys[y]][self.aois[z]][k][1])
-                list.append(max)
-            result[keys[y]] = list
+                tempList.append(max)
+            result[keys[y]] = tempList
         return result
 
     def getTimeToFirstFixation(self, paritcipantsWithAois):
-       print "aaa"
+       print ("aaa")
        # TODO ... discutable
 
     def getAoiFeatures(self, paritcipantsWithAois):
