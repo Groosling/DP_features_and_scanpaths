@@ -8,6 +8,21 @@ parser = ConfigParser()
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     parser.readfp(f)
 
+def get_formatted_sequences(sequences):
+    """
+    {'01': [[A, 150], [B, 250]], '02': ...} gets transformed into:
+    [{'identifier': '01', 'fixations': [[A, 150], [B, 250]]}, {'identifier': '02' ... }]
+    """
+    formatted_sequences = []
+    keys = list(sequences)
+    for it in range(0, len(sequences)):
+        act_rec = {
+            'identifier': keys[it],
+            'fixations': sequences[keys[it]]
+        }
+        formatted_sequences.append(act_rec)
+
+    return formatted_sequences
 def createSequencesBasedOnVisualElements(my_dataset):
     max_AOI = int(parser.get('sequence', 'maxAoi'))
     errorRateArea = int(parser.get('sequence', 'errorRateArea'))

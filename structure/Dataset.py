@@ -108,21 +108,7 @@ class Dataset:
     def load_visuals(self):
         print ('hello')
 
-    def get_formatted_sequences(self, sequences):
-        """
-        {'01': [[A, 150], [B, 250]], '02': ...} gets transformed into:
-        [{'identifier': '01', 'fixations': [[A, 150], [B, 250]]}, {'identifier': '02' ... }]
-        """
-        formatted_sequences = []
-        keys = list(sequences)
-        for it in range(0, len(sequences)):
-            act_rec = {
-                'identifier': keys[it],
-                'fixations': sequences[keys[it]]
-            }
-            formatted_sequences.append(act_rec)
 
-        return formatted_sequences
 
     def get_max_similarity(self, scanpaths):
         """ Function calculates most similiar double for each scanpath in the set """

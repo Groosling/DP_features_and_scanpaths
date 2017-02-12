@@ -2,7 +2,7 @@ from __future__ import division
 
 import json
 
-from algorithm.stringEditAlgs import *
+from algorithm.StringEditAlgs import *
 from structure.Dataset import *
 from structure.Environment import *
 from structure.Sequence import *
@@ -333,16 +333,9 @@ class Sta:
         for y in range(0, len(myFinalList)):
             commonSequence.append(myFinalList[y][0])
 
-        formatted_sequences = self.my_dataset.get_formatted_sequences(mySequences)
-
-        # Store scanpaths as an array of string-converted original scanpaths
-        scanpath_strs = convert_to_strs(formatted_sequences)
-
         common_scanpath = self.getAbstractedSequence(commonSequence)
-        res_data = {
-            'fixations': common_scanpath,
-            'similarity': calc_similarity_to_common(scanpath_strs, common_scanpath)
-        }
+
+        res_data = calcSimilarityForDataset(mySequences, common_scanpath)
 
         # to get JSON use return str(sta_run()) when calling this alg
         # return json.dumps(res_data)

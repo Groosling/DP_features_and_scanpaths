@@ -1,7 +1,7 @@
 from structure import Sequence
 
 from operator import itemgetter, attrgetter
-
+from algorithm.StringEditAlgs import *
 
 class Dotplot:
 
@@ -126,4 +126,8 @@ class Dotplot:
             mySequences = Sequence.simplifySequence(mySequences)
 
         stringSequences = Sequence.getStringRepresentation(mySequences)
-        return self.findCommonSequence(stringSequences)
+        res_data = calcSimilarityForDataset(mySequences, list(self.findCommonSequence(stringSequences)))
+        for keys,values in res_data.items():
+            print(keys)
+            print(values)
+        # return self.findCommonSequence(stringSequences)

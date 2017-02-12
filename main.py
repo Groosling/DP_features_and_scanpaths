@@ -43,19 +43,19 @@ if __name__ == "__main__":
     """
 
     """ Position-based Weighted Models """
-    """
+    # """
     pbwm  = Position_based_Weighted_Models(my_dataset)
     #  po simplifikacii stale rovnako
     result = pbwm.run_PBWM(mod=5)
     print (result)
-    """
+    # """
 
     """Dotplot"""
-    # """
+    """
     dotplot = Dotplot(my_dataset, my_env)
-    common_sequence = dotplot.runDotplot(simplify=True, mod=3)
-    print (common_sequence)
-    # """
+    dotplot.runDotplot(simplify=True, mod=3)
+    # print (common_sequence)
+    """
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
     # sequence = Sequence.getArrayRepresentationOfSequence(sequence)
