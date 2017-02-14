@@ -120,6 +120,7 @@ class Sta:
                     counter = counter + [s[0:2] for s in Sequences[keys[y]]].count(AoIs[x])
                     duration = duration + sum([int(w[2]) for w in Sequences[keys[y]] if w[0:2] == AoIs[x]])
                     flagCounter = flagCounter + 1
+            # TODO maybe change for: if flagCounter > len(keys)/2:
 
             if flagCounter == len(keys):
                 AoIcount.append([AoIs[x], counter, duration, True])

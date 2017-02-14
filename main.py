@@ -21,8 +21,8 @@ if __name__ == "__main__":
     my_dataset = Dataset(
                          # 'data/template_sta/scanpaths/DOD2016_fixations_2_participants.tsv',
                          # 'data/template_sta/scanpaths/DOD2016_fixations.tsv',
-                         # 'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
-                         'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
+                         'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
+                         # 'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
                          # 'data/template_sta/regions/seg_FIIT_page.txt',
                          'data/template_sta/regions/seg_FIIT_page_simplified.txt',
                          'static/images/datasets/template_sta/placeholder.png',
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
 
     """ STA part"""
-    """
+    # """
     start_time = time.time()
 
     sta = Sta(my_dataset, my_env)
@@ -40,20 +40,20 @@ if __name__ == "__main__":
     sta.sta_run(simplify=True,mod=2)
     # print "aaaaaaaaaaa"
     print("--- %s seconds ---" % (time.time() - start_time))
-    """
+    # """
 
     """ Position-based Weighted Models """
-    # """
+    """
     pbwm  = Position_based_Weighted_Models(my_dataset)
     #  po simplifikacii stale rovnako
-    result = pbwm.run_PBWM(mod=5)
+    result = pbwm.run_PBWM(mod=1)
     print (result)
-    # """
+    """
 
     """Dotplot"""
     """
     dotplot = Dotplot(my_dataset, my_env)
-    dotplot.runDotplot(simplify=True, mod=3)
+    dotplot.runDotplot(simplify=True, mod=1)
     # print (common_sequence)
     """
 

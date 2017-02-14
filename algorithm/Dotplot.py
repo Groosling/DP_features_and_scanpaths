@@ -86,7 +86,7 @@ class Dotplot:
             # replace 2 most similar sequences with their common sequence
             commonSequences = sorted(commonSequences, reverse=True, key=itemgetter(3))
             if commonSequences[0][2] == "":
-                return "Dotplot common scanpath doesn't exist."
+                return ""
 
             del stringSequences[commonSequences[0][0]]
             del stringSequences[commonSequences[0][1]]

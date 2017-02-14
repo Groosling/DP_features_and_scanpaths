@@ -1,5 +1,6 @@
 from __future__ import division
-
+from structure.Sequence import *
+import numpy as np
 
 def convert_to_strs(scanpaths):
     scanpath_strs = []
@@ -93,3 +94,27 @@ def levenshtein(s1, s2):
         previous_row = current_row
 
     return previous_row[-1]
+
+
+def calcSimilarityForDataset(mySequence, common_scanpath):
+    """
+    Calculates similarity between scanpaths of participants in dataset and common scanpath
+    Args:
+        mySequence:
+        common_scanpath:
+
+    Returns:
+
+    """
+    formatted_sequences = get_formatted_sequences(mySequence)
+
+    # Store scanpaths as an array of string-converted original scanpaths
+    scanpath_strs = convert_to_strs(formatted_sequences)
+
+
+    result =  {
+        'fixations': common_scanpath,
+        'similarity': calc_similarity_to_common(scanpath_strs, common_scanpath)
+    }
+    result['OverAllSimilarity'] = np.mean(list(result['similarity'].values()))
+    return result
