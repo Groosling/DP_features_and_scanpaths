@@ -121,7 +121,7 @@ class Sta:
                     duration = duration + sum([int(w[2]) for w in Sequences[keys[y]] if w[0:2] == AoIs[x]])
                     flagCounter = flagCounter + 1
             # TODO maybe change for: if flagCounter > len(keys)/2:
-
+            # if flagCounter > len(keys)/2:
             if flagCounter == len(keys):
                 AoIcount.append([AoIs[x], counter, duration, True])
             else:
@@ -343,6 +343,9 @@ class Sta:
         for keys,values in res_data.items():
             print(keys)
             print(values)
+
+        return res_data
+
     """  ked uz mas custom scanpath """
     def custom_run(self, custom_scanpath):
         myErrorRateArea = self.my_env.get_error_rate_area()

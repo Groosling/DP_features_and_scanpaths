@@ -130,4 +130,4 @@ class Dotplot:
         for keys,values in res_data.items():
             print(keys)
             print(values)
-        # return self.findCommonSequence(stringSequences)
+        return res_data

@@ -9,7 +9,7 @@ from featureExtraction import BasicFeatures
 from featureExtraction import AgregatedFeatures
 from featureExtraction.AoiFeatures import *
 from featureExtraction.AngleFeatures import *
-
+from display.ScanpathPlotter import ScanpathPlotter
 if __name__ == "__main__":
     parser = ConfigParser()
     # Open the file with the correct encoding
@@ -21,8 +21,8 @@ if __name__ == "__main__":
     my_dataset = Dataset(
                          # 'data/template_sta/scanpaths/DOD2016_fixations_2_participants.tsv',
                          # 'data/template_sta/scanpaths/DOD2016_fixations.tsv',
-                         'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
-                         # 'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
+                         # 'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
+                         'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
                          # 'data/template_sta/regions/seg_FIIT_page.txt',
                          'data/template_sta/regions/seg_FIIT_page_simplified.txt',
                          'static/images/datasets/template_sta/placeholder.png',
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     sta = Sta(my_dataset, my_env)
     # bez simpifyingu fungovalo lepsie
-    sta.sta_run(simplify=True,mod=2)
+    res_data = sta.sta_run(mod=1)
     # print "aaaaaaaaaaa"
     print("--- %s seconds ---" % (time.time() - start_time))
     # """
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     """Dotplot"""
     """
     dotplot = Dotplot(my_dataset, my_env)
-    dotplot.runDotplot(simplify=True, mod=1)
+    res_data = dotplot.runDotplot(simplify=True, mod=1)
     # print (common_sequence)
     """
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     # result = aoisFeatures.getAoiFeatures(participantsWithAois)
     # angleFeatures = AngleFeatures()
     # angleFeatures.getAngleFeatures(my_dataset)
-    print ("aaa")
+    # print ("aaa")
 
 
     # errorRateArea = 0
@@ -83,3 +83,15 @@ if __name__ == "__main__":
     # processed_sequence = Sequence.applyFixDurationThreshold(mySequences)
 
 
+    scanPathPlotter = ScanpathPlotter()
+    commonScanpathPositions =scanPathPlotter.scanpathToPlotRepresentation(res_data['fixations'], my_dataset.aois)
+    keys = list(my_dataset.participants.keys())
+    for key in keys:
+        scanPath = scanPathPlotter.participantToPlotRepresentation(my_dataset.participants[key])
+        scanPathPlotter.plot2D("Participant " + key,
+                               "Participant " + key,
+                               "d:\\diplomovka\\kod\\DP_features_and_scanpaths\\data\\template_sta\\img\\AOIs.png",
+                               scanPath,
+                               commonScanpathPositions,
+                                firstScanpathLegend=key
+                              )

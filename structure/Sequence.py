@@ -8,6 +8,7 @@ parser = ConfigParser()
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     parser.readfp(f)
 
+
 def get_formatted_sequences(sequences):
     """
     {'01': [[A, 150], [B, 250]], '02': ...} gets transformed into:
