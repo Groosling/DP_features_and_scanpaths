@@ -1,0 +1,9 @@
+header 7 1875 0 52 A
+top_menu 5 1877 61 50 B
+cart_steps 469 689 151 113 C
+item 464 704 266 165 D
+sum 469 701 439 139 E
+step_buttons 463 709 580 101 F
+recommended 455 723 688 545 G
+footer 0 1881 1254 620 H
+advice 1193 245 141 1094 I

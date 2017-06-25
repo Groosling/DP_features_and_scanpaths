@@ -1,0 +1,10 @@
+menu 357 1173 57 53 A
+left_header 362 363 9 45 B
+middle_header 731 322 5 50 C
+right_header 1062 454 7 48 D
+ponuky_menu 350 860 144 120 E
+ponuky1 350 1172 268 1072 F
+ponuky2 345 1181 1344 1350 G
+ponuky3 346 1175 2699 1337 H
+ponuky4 339 1185 4043 2792 I
+footer 3 1887 6908 730 J
