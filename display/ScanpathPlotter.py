@@ -96,6 +96,7 @@ class ScanpathPlotter:
         Returns:
 
         """
+        plt.clf()
         ax = plt.axes()
 
         # imige
