@@ -18,29 +18,26 @@ if __name__ == "__main__":
 
     # Storage for all loaded data
 
-    my_dataset = Dataset(
-                         # 'data/template_sta/scanpaths/DOD2016_fixations_2_participants.tsv',
-                         # 'data/template_sta/scanpaths/DOD2016_fixations.tsv',
-                         # 'data/template_sta/scanpaths/DOD2016_fixations_10_participants.tsv',
-                         'data/template_sta/scanpaths/DOD2016_fixations_5_participants.tsv',
-                         # 'data/template_sta/regions/seg_FIIT_page.txt',
-                         'data/template_sta/regions/seg_FIIT_page_simplified.txt',
-                         'static/images/datasets/template_sta/placeholder.png',
-                         'http://www.fiit.stuba.sk/')
     # Environment in which the eye tracking experiment was performed
+    my_dataset = Dataset(
+                        parser.get('run', 'scanpathFilePath'),
+                        parser.get('run', 'AoiFilePath'),
+                        'static/images/datasets/template_sta/placeholder.png', # default stuff
+                        parser.get('run', 'websiteName'),
+    )
     my_env = Environment(0.5, 60, 1920, 1200, 17)
 
 
-    """ STA part"""
-    # """
-    start_time = time.time()
-
-    sta = Sta(my_dataset, my_env)
-    # bez simpifyingu fungovalo lepsie
-    res_data = sta.sta_run(mod=1)
-    # print "aaaaaaaaaaa"
-    print("--- %s seconds ---" % (time.time() - start_time))
-    # """
+    # """ STA part"""
+    # # """
+    # start_time = time.time()
+    #
+    # sta = Sta(my_dataset, my_env)
+    # # bez simpifyingu fungovalo lepsie
+    # res_data = sta.sta_run(mod=1)
+    # # print "aaaaaaaaaaa"
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    # # """
 
     """ Position-based Weighted Models """
     """
@@ -81,8 +78,8 @@ if __name__ == "__main__":
     #
     # mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
     # processed_sequence = Sequence.applyFixDurationThreshold(mySequences)
-
-
+    res_data = {}
+    res_data['fixations'] = []
     scanPathPlotter = ScanpathPlotter()
     commonScanpathPositions =scanPathPlotter.scanpathToPlotRepresentation(res_data['fixations'], my_dataset.aois)
     keys = list(my_dataset.participants.keys())
@@ -90,7 +87,7 @@ if __name__ == "__main__":
         scanPath = scanPathPlotter.participantToPlotRepresentation(my_dataset.participants[key])
         scanPathPlotter.plot2D("Participant " + key,
                                "Participant " + key,
-                               "d:\\diplomovka\\kod\\DP_features_and_scanpaths\\data\\template_sta\\img\\AOIs.png",
+                               parser.get('run', 'backgroundPageImage'),
                                scanPath,
                                commonScanpathPositions,
                                 firstScanpathLegend=key

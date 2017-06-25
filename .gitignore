@@ -2,3 +2,4 @@
 data/template_sta/scanpaths/DOD2016_Data_Export.tsv
 # pycharm stuff
 .idea/
+*.pyc

@@ -96,6 +96,7 @@ class Sta:
 
         minValueCounter = commonAoIs[0][1]
         for AoIdetails in commonAoIs:
+            # TODO zmenit threshold na pocet vyskytov
             if minValueCounter > AoIdetails[1]:
                 minValueCounter = AoIdetails[1]
 
@@ -336,7 +337,7 @@ class Sta:
 
         common_scanpath = self.getAbstractedSequence(commonSequence)
 
-        res_data = calcSimilarityForDataset(mySequences, common_scanpath)
+        res_data = calcSimilarityForDataset(mySequences, common_scanpath, self.my_dataset.aois)
 
         # to get JSON use return str(sta_run()) when calling this alg
         # return json.dumps(res_data)
