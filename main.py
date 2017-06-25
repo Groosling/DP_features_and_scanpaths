@@ -10,6 +10,58 @@ from featureExtraction import AgregatedFeatures
 from featureExtraction.AoiFeatures import *
 from featureExtraction.AngleFeatures import *
 from display.ScanpathPlotter import ScanpathPlotter
+
+
+ALGORITHM_STA = 1
+ALGORITHM_PBWM = 2
+ALGORITHM_DOTPLOT = 3
+
+def staAlgorithm(my_dataset, myEnv):
+    start_time = time.time()
+    sta = Sta(my_dataset, my_env)
+    res_data = sta.sta_run(mod=1)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    return res_data
+
+def positionBasedWeightedModelsAlgorithm(my_dataset, myEnv):
+    start_time = time.time()
+    pbwm  = Position_based_Weighted_Models(my_dataset)
+    result = pbwm.run_PBWM(mod=1)
+    print (result)
+
+    print("--- %s seconds ---" % (time.time() - start_time))
+    return res_data
+
+
+def dotplotAlgorithm(my_dataset, myEnv):
+    start_time = time.time()
+    dotplot = Dotplot(my_dataset, my_env)
+    res_data = dotplot.runDotplot(simplify=True, mod=1)
+    # print (common_sequence)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    return res_data
+
+
+def applyCommonScanpathAlgorithm(my_dataset, myEnv, mod):
+    """
+    Apply algorithm for extraction of common scanpath
+    Args:
+        my_dataset: dataset
+        mod:     1 apply STA
+                 2 apply Position Based Weighted Models
+                 3 apply Dotplot
+    Returns: common scanpath
+
+    """
+    case = {
+      1: staAlgorithm,
+      2: positionBasedWeightedModelsAlgorithm,
+      3: dotplotAlgorithm,
+    }
+    myFunc = case[mod]
+    return myFunc(my_dataset, myEnv)
+
+
 if __name__ == "__main__":
     parser = ConfigParser()
     # Open the file with the correct encoding
@@ -27,32 +79,8 @@ if __name__ == "__main__":
     )
     my_env = Environment(0.5, 60, 1920, 1200, 17)
 
+    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_STA)
 
-    # """ STA part"""
-    # # """
-    # start_time = time.time()
-    #
-    # sta = Sta(my_dataset, my_env)
-    # # bez simpifyingu fungovalo lepsie
-    # res_data = sta.sta_run(mod=1)
-    # # print "aaaaaaaaaaa"
-    # print("--- %s seconds ---" % (time.time() - start_time))
-    # # """
-
-    """ Position-based Weighted Models """
-    """
-    pbwm  = Position_based_Weighted_Models(my_dataset)
-    #  po simplifikacii stale rovnako
-    result = pbwm.run_PBWM(mod=1)
-    print (result)
-    """
-
-    """Dotplot"""
-    """
-    dotplot = Dotplot(my_dataset, my_env)
-    res_data = dotplot.runDotplot(simplify=True, mod=1)
-    # print (common_sequence)
-    """
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
     # sequence = Sequence.getArrayRepresentationOfSequence(sequence)
@@ -78,8 +106,10 @@ if __name__ == "__main__":
     #
     # mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
     # processed_sequence = Sequence.applyFixDurationThreshold(mySequences)
-    res_data = {}
-    res_data['fixations'] = []
+
+
+    # res_data = {}
+    # res_data['fixations'] = []
     scanPathPlotter = ScanpathPlotter()
     commonScanpathPositions =scanPathPlotter.scanpathToPlotRepresentation(res_data['fixations'], my_dataset.aois)
     keys = list(my_dataset.participants.keys())
