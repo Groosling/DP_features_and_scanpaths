@@ -55,8 +55,9 @@ class Position_based_Weighted_Models:
         for i in range (0, 3):
             result =  result + sorted_d[i][0]
 
-        res_data = calcSimilarityForDataset(mySequences, list(result))
+        res_data = calcSimilarityForDataset(mySequences, list(result),self.my_dataset.aois)
         for keys,values in res_data.items():
             print(keys)
             print(values)
+        return res_data
         # return result[:len(result)-1]

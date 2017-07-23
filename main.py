@@ -26,8 +26,8 @@ def staAlgorithm(my_dataset, myEnv):
 def positionBasedWeightedModelsAlgorithm(my_dataset, myEnv):
     start_time = time.time()
     pbwm  = Position_based_Weighted_Models(my_dataset)
-    result = pbwm.run_PBWM(mod=1)
-    print (result)
+    res_data = pbwm.run_PBWM(mod=1)
+    print (res_data)
 
     print("--- %s seconds ---" % (time.time() - start_time))
     return res_data
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     )
     my_env = Environment(0.5, 60, 1920, 1200, 17)
 
-    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_STA)
+    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_PBWM)
 
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
@@ -107,9 +107,9 @@ if __name__ == "__main__":
     # mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
     # processed_sequence = Sequence.applyFixDurationThreshold(mySequences)
 
-
-    # res_data = {}
-    # res_data['fixations'] = []
+    if res_data is None:
+        res_data = {}
+        res_data['fixations'] = []
     scanPathPlotter = ScanpathPlotter()
     commonScanpathPositions =scanPathPlotter.scanpathToPlotRepresentation(res_data['fixations'], my_dataset.aois)
     keys = list(my_dataset.participants.keys())

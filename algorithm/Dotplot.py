@@ -126,7 +126,7 @@ class Dotplot:
             mySequences = Sequence.simplifySequence(mySequences)
 
         stringSequences = Sequence.getStringRepresentation(mySequences)
-        res_data = calcSimilarityForDataset(mySequences, list(self.findCommonSequence(stringSequences)))
+        res_data = calcSimilarityForDataset(mySequences, list(self.findCommonSequence(stringSequences)),self.my_dataset.aois)
         for keys,values in res_data.items():
             print(keys)
             print(values)
