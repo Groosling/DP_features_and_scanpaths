@@ -1,7 +1,7 @@
 import operator
 
 from structure import Sequence
-
+from algorithm.StringEditAlgs import *
 
 class Position_based_Weighted_Models:
     def __init__(self, my_dataset):
@@ -35,7 +35,7 @@ class Position_based_Weighted_Models:
         if simplify:
             mySequences = Sequence.simplifySequence(mySequences)
 
-        keys = mySequences.keys()
+        keys = list(mySequences)
         # creating dictionary of AOIS
         aois = {}
         for item in self.my_dataset.aois:
@@ -53,6 +53,10 @@ class Position_based_Weighted_Models:
         # create printable result
         result = ""
         for i in range (0, 3):
-            result =  result + sorted_d[i][0] +","
+            result =  result + sorted_d[i][0]
 
-        return result[:len(result)-1]
+        res_data = calcSimilarityForDataset(mySequences, list(result))
+        for keys,values in res_data.items():
+            print(keys)
+            print(values)
+        # return result[:len(result)-1]

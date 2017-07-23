@@ -1,7 +1,7 @@
 from structure import Sequence
 
 from operator import itemgetter, attrgetter
-
+from algorithm.StringEditAlgs import *
 
 class Dotplot:
 
@@ -66,7 +66,7 @@ class Dotplot:
         Returns:
 
         """
-        keys = stringSequences.keys()
+        keys = list(stringSequences)
         while len(keys) > 1:
             commonSequences = []
             for y in range(0, len(keys)):
@@ -86,12 +86,12 @@ class Dotplot:
             # replace 2 most similar sequences with their common sequence
             commonSequences = sorted(commonSequences, reverse=True, key=itemgetter(3))
             if commonSequences[0][2] == "":
-                return "Dotplot common scanpath doesn't exist."
+                return ""
 
             del stringSequences[commonSequences[0][0]]
             del stringSequences[commonSequences[0][1]]
             stringSequences[commonSequences[0][0] + commonSequences[0][1]] = commonSequences[0][2]
-            keys = stringSequences.keys()
+            keys = list(stringSequences)
         return stringSequences[keys[0]]
 
 
@@ -126,4 +126,8 @@ class Dotplot:
             mySequences = Sequence.simplifySequence(mySequences)
 
         stringSequences = Sequence.getStringRepresentation(mySequences)
-        return self.findCommonSequence(stringSequences)
+        res_data = calcSimilarityForDataset(mySequences, list(self.findCommonSequence(stringSequences)))
+        for keys,values in res_data.items():
+            print(keys)
+            print(values)
+        return res_data

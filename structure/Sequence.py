@@ -1,20 +1,36 @@
 from math import *
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 import codecs
+from operations.Operations import *
 
-AOIS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-parser = SafeConfigParser()
+parser = ConfigParser()
 # Open the file with the correct encoding
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     parser.readfp(f)
 
+
+def get_formatted_sequences(sequences):
+    """
+    {'01': [[A, 150], [B, 250]], '02': ...} gets transformed into:
+    [{'identifier': '01', 'fixations': [[A, 150], [B, 250]]}, {'identifier': '02' ... }]
+    """
+    formatted_sequences = []
+    keys = list(sequences)
+    for it in range(0, len(sequences)):
+        act_rec = {
+            'identifier': keys[it],
+            'fixations': sequences[keys[it]]
+        }
+        formatted_sequences.append(act_rec)
+
+    return formatted_sequences
 def createSequencesBasedOnVisualElements(my_dataset):
     max_AOI = int(parser.get('sequence', 'maxAoi'))
     errorRateArea = int(parser.get('sequence', 'errorRateArea'))
     Sequences = {}
     Participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = Participants.keys()
+    keys = list(Participants)
     for y in range(0, len(keys)):
         sequence = ""
         counter = 0
@@ -85,7 +101,7 @@ def getArrayRepresentationOfSequence(mySequences):
     Returns: array representation of sequence
 
     """
-    keys = mySequences.keys()
+    keys = list(mySequences)
     # odstranenie bodky na konci
     for y in range(0, len(keys)):
         mySequences[keys[y]] = mySequences[keys[y]].split('.')
@@ -105,7 +121,7 @@ def simplifySequence(aSequence):
     Returns:
         Processed sequence in array representation
     """
-    keys = aSequence.keys()
+    keys = list(aSequence)
     for y in range(0, len(keys)):
         simpleSequence = []
         lastAOI = "0"
@@ -129,7 +145,7 @@ def applyFixDurationThreshold(aSequence, threshold = 80):
     Returns:
         Processed sequence in array representation
     """
-    keys = aSequence.keys()
+    keys = list(aSequence)
     for y in range(0, len(keys)):
         processedArray = []
         for z in range(0, len(aSequence[keys[y]])):
@@ -148,7 +164,7 @@ def getStringRepresentation(aSequence):
 
     """
     newDict  = {}
-    keys = aSequence.keys()
+    keys = list(aSequence)
     for y in range(0, len(keys)):
         sequence = ""
         for z in range(0, len(aSequence[keys[y]])):
@@ -166,11 +182,12 @@ def createSequencesBasedOnDistances(my_dataset):
 
     """
     aoiRange = int(parser.get('aoiRange', 'saccadeLength'))
+    print(parser.get('sequence', 'maxAoi'))
     max_AOI = int(parser.get('sequence', 'maxAoi'))
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         sequence = ""
         for z in range(0, min(len(participants[keys[y]]) - 1, max_AOI)):
@@ -180,23 +197,6 @@ def createSequencesBasedOnDistances(my_dataset):
         sequences[keys[y]] = sequence
     return sequences
 
-
-def calculateDistance(xStart, yStart, xEnd, yEnd):
-    """
-    Calculate distance of 2D coordinates.
-    """
-    return sqrt(pow(xEnd - xStart, 2) + pow(yEnd - yStart, 2))
-
-def getAOIBasedOnRange(value, aoiRange):
-    """
-    Determine AOI based on range
-    Args:
-        value: distance between fixations
-        range: range of distance for single AOI
-
-    Returns: character representation of AOI
-    """
-    return AOIS[int(value / aoiRange)]
 
 def createSequencesBasedOnFixatonDurations(my_dataset):
     """
@@ -211,7 +211,7 @@ def createSequencesBasedOnFixatonDurations(my_dataset):
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         sequence = ""
         for z in range(0, min(len(participants[keys[y]]) - 1, max_AOI)):
@@ -220,26 +220,6 @@ def createSequencesBasedOnFixatonDurations(my_dataset):
         sequences[keys[y]] = sequence
     return sequences
 
-def calculateVector(xStart, yStart, xEnd, yEnd):
-    """
-    Calculate vector between two 2D coordinates.
-    """
-    return [xEnd - xStart, yEnd - yStart]
-
-def calculateAngle(vect1, vect2):
-    """
-    Calculates angle between 2 vector in 2D space
-    Args:
-        vect1: vector represented as list
-        vect2: vector represented as list
-
-    Returns:
-
-    """
-    vect1Size = calculateDistance(0, 0, vect1[0], vect1[1])
-    vect2Size = calculateDistance(0, 0, vect2[0], vect2[1])
-    dotProduct = (vect1[0] * vect2[0]) + (vect1[1] * vect2[1])
-    return degrees(acos(dotProduct / (vect1Size * vect2Size)))
 
 
 def createSequencesBasedOnRelativeAngle(my_dataset):
@@ -255,7 +235,7 @@ def createSequencesBasedOnRelativeAngle(my_dataset):
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         # TODO vec1 = vec2 at the beginning of the cycle ... better time complexity
         # TODO add condition if sequence has two elements or so.. return empty sequence.. depends ond cycle
@@ -288,7 +268,7 @@ def createSequencesBasedOnAbsoluteAngle(my_dataset):
     sequences = {}
     participants = my_dataset.participants
     myAoIs = my_dataset.aois
-    keys = participants.keys()
+    keys = list(participants)
     for y in range(0, len(keys)):
         sequence = ""
         for z in range(0, min(len(participants[keys[y]]) - 1, max_AOI)):
@@ -311,13 +291,12 @@ def createSequences(my_dataset, mod):
         mod:     1 vytvori standardny scanpath z AOI
                  2 vytvori scanpah na zaklade dlzky sakad
                  3 vytvori scanpath na zaklade dlzky trvania fixacii
-                 4 vytvori scanpath na zaklade relativnych uhlov sakad0
+                 4 vytvori scanpath na zaklade relativnych uhlov sakad
                  5 vytvori scanpath na zaklade absolutnych uhlov sakad
 
     Returns:
 
     """
-
     case = {
       1: createSequencesBasedOnVisualElements,
       2: createSequencesBasedOnDistances,

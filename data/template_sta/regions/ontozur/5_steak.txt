@@ -1,0 +1,16 @@
+header 0 1889 3 54 A
+top_menu 0 1892 60 46 B
+image 3 1883 111 745 C
+buy 1227 320 862 482 D
+caption 0 1230 862 88 E
+basic_rating 0 1221 956 77 F
+info1 9 1204 1041 505 G
+buy2 340 1210 1564 548 H
+coupon_info 340 1204 2117 354 I
+overall_rating 359 573 2554 465 J
+recent_rating 944 631 2554 471 K
+gallery 362 1215 3033 753 L
+contact 368 1213 3795 565 M
+other 362 1218 4368 437 N
+recommended 348 1235 4825 582 O
+footer 3 1880 5415 556 P

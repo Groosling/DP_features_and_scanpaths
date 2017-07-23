@@ -2,7 +2,7 @@ from __future__ import division
 
 import json
 
-from stringEditAlgs import *
+from algorithm.StringEditAlgs import *
 from structure.Dataset import *
 from structure.Environment import *
 from structure.Sequence import *
@@ -91,11 +91,12 @@ class Sta:
                 commonAoIs.append(myAoIdetail)
 
         if len(commonAoIs) == 0:
-            print "No shared instances!"
+            print ("No shared instances!")
             exit(1)
 
         minValueCounter = commonAoIs[0][1]
         for AoIdetails in commonAoIs:
+            # TODO zmenit threshold na pocet vyskytov
             if minValueCounter > AoIdetails[1]:
                 minValueCounter = AoIdetails[1]
 
@@ -114,13 +115,14 @@ class Sta:
             counter = 0
             duration = 0
             flagCounter = 0
-            keys = Sequences.keys()
+            keys = list(Sequences)
             for y in range(0, len(keys)):
                 if [s[0:2] for s in Sequences[keys[y]]].count(AoIs[x]) > 0:
                     counter = counter + [s[0:2] for s in Sequences[keys[y]]].count(AoIs[x])
                     duration = duration + sum([int(w[2]) for w in Sequences[keys[y]] if w[0:2] == AoIs[x]])
                     flagCounter = flagCounter + 1
-
+            # TODO maybe change for: if flagCounter > len(keys)/2:
+            # if flagCounter > len(keys)/2:
             if flagCounter == len(keys):
                 AoIcount.append([AoIs[x], counter, duration, True])
             else:
@@ -141,7 +143,7 @@ class Sta:
             if AoI[3] == True:
                 significantAoIs.append(AoI[0])
 
-        keys = Sequences.keys()
+        keys = list(Sequences)
         for y in range(0, len(keys)):
             temp = []
             for k in range(0, len(Sequences[keys[y]])):
@@ -156,7 +158,7 @@ class Sta:
 
     def getExistingAoIList(self, Sequences):
         AoIlist = []
-        keys = Sequences.keys()
+        keys = list(Sequences)
         for y in range(0, len(keys)):
             for x in range(0, len(Sequences[keys[y]])):
                 try:
@@ -167,7 +169,7 @@ class Sta:
 
 
     def calculateNumberDurationOfFixationsAndNSV(self, Sequences):
-        keys = Sequences.keys()
+        keys = list(Sequences)
         for x in range(0, len(keys)):
             myAbstractedSequence = []
             myAbstractedSequence = [Sequences[keys[x]][0][0:2] + [1] + [int(Sequences[keys[x]][0][2])]]
@@ -182,7 +184,7 @@ class Sta:
 
             Sequences[keys[x]] = myAbstractedSequence
 
-        keys = Sequences.keys()
+        keys = list(Sequences)
 
         for x in range(0, len(keys)):
             for y in range(0, len(Sequences[keys[x]])):
@@ -202,7 +204,7 @@ class Sta:
             totalNSV = 0
 
             flag = 0
-            keys = Sequences.keys()
+            keys = list(Sequences)
             for y in range(0, len(keys)):
                 for k in range(0, len(Sequences[keys[y]])):
                     if Sequences[keys[y]][k][0:2] == AoIList[x]:
@@ -256,7 +258,7 @@ class Sta:
         myErrorRateArea = self.my_env.get_error_rate_area()
         mySequences = self.createSequences( myErrorRateArea)
 
-        keys = mySequences.keys()
+        keys = list(mySequences)
         for y in range(0, len(keys)):
             mySequences[keys[y]] = mySequences[keys[y]].split('.')
             del mySequences[keys[y]][len(mySequences[keys[y]]) - 1]
@@ -294,7 +296,7 @@ class Sta:
         """
         mySequences = createSequences(self.my_dataset, mod)
 
-        print "povodne sekvencie"
+        print ("povodne sekvencie")
         for keys,values in mySequences.items():
             print(keys)
             print(values)
@@ -309,7 +311,7 @@ class Sta:
 
         # First-Pass
         mySequences_num = {}
-        keys = mySequences.keys()
+        keys = list(mySequences)
         for y in range(0, len(keys)):
             mySequences_num[keys[y]] = self.getNumberedSequence(mySequences[keys[y]])
 
@@ -333,28 +335,24 @@ class Sta:
         for y in range(0, len(myFinalList)):
             commonSequence.append(myFinalList[y][0])
 
-        formatted_sequences = self.my_dataset.get_formatted_sequences(mySequences)
-
-        # Store scanpaths as an array of string-converted original scanpaths
-        scanpath_strs = convert_to_strs(formatted_sequences)
-
         common_scanpath = self.getAbstractedSequence(commonSequence)
-        res_data = {
-            'fixations': common_scanpath,
-            'similarity': calc_similarity_to_common(scanpath_strs, common_scanpath)
-        }
+
+        res_data = calcSimilarityForDataset(mySequences, common_scanpath, self.my_dataset.aois)
 
         # to get JSON use return str(sta_run()) when calling this alg
         # return json.dumps(res_data)
         for keys,values in res_data.items():
             print(keys)
             print(values)
+
+        return res_data
+
     """  ked uz mas custom scanpath """
     def custom_run(self, custom_scanpath):
         myErrorRateArea = self.my_env.get_error_rate_area()
         mySequences = createSequencesBasedOnVisualElements(self.my_dataset, myErrorRateArea)
 
-        keys = mySequences.keys()
+        keys = list(mySequences)
         for y in range(0, len(keys)):
             mySequences[keys[y]] = mySequences[keys[y]].split('.')
             del mySequences[keys[y]][len(mySequences[keys[y]]) - 1]

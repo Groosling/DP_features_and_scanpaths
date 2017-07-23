@@ -38,7 +38,7 @@ class Dataset:
             try:
                 fo = open(self.file_path_scanpaths, "r")
             except:
-                print "Failed to open specified file - skipping to next one"
+                print ("Failed to open specified file - skipping to next one")
                 return
             act_file_content = fo.read()
 
@@ -58,7 +58,6 @@ class Dataset:
                     self.YPOINT_INDEX = column_captions.index("FixationPointY (MCSpx)")
                     self.PAGE_NAME_INDEX = column_captions.index("MediaName")
                     self.PARTICIPANT_NAME_INDEX = column_captions.index("ParticipantName")
-                    #  TODO find specific column this way a contruct needed structure
                 else:
 
                     try:
@@ -81,7 +80,7 @@ class Dataset:
                                                   temp_act_file_line[self.PAGE_NAME_INDEX],
                             ])
                     except:
-                        print "Invalid data format - line will be skipped"
+                        print ("Invalid data format - line will be skipped")
                         continue
 
                     # Return object containing array of fixations (each fixation is also an array)
@@ -97,7 +96,7 @@ class Dataset:
         try:
             fo = open(self.file_path_aoi, "r")
         except:
-            print "Failed to open file containing areas of interest"
+            print ("Failed to open file containing areas of interest")
         aoi_file = fo.read()
         file_lines = aoi_file.split('\n')
 
@@ -107,23 +106,9 @@ class Dataset:
             self.aois.append([temp[0], temp[1], temp[2], temp[3], temp[4], temp[5]])
 
     def load_visuals(self):
-        print 'hello'
+        print ('hello')
 
-    def get_formatted_sequences(self, sequences):
-        """
-        {'01': [[A, 150], [B, 250]], '02': ...} gets transformed into:
-        [{'identifier': '01', 'fixations': [[A, 150], [B, 250]]}, {'identifier': '02' ... }]
-        """
-        formatted_sequences = []
-        keys = sequences.keys()
-        for it in range(0, len(sequences)):
-            act_rec = {
-                'identifier': keys[it],
-                'fixations': sequences[keys[it]]
-            }
-            formatted_sequences.append(act_rec)
 
-        return formatted_sequences
 
     def get_max_similarity(self, scanpaths):
         """ Function calculates most similiar double for each scanpath in the set """
