@@ -84,9 +84,8 @@ def calc_similarity_to_common(scanpath_strs, scanpath_common, substitution_Matri
 def levenshtein(s1, s2, substitution_Matrix, aoisPositionsDict):
 
     if len(s1) < len(s2):
-        return levenshtein(s2, s1)
+        return levenshtein(s2, s1, substitution_Matrix, aoisPositionsDict)
 
-    # len(s1) >= len(s2)
     if len(s2) == 0:
         return len(s1)
 

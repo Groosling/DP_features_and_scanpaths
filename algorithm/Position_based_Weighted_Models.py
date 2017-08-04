@@ -33,7 +33,8 @@ class Position_based_Weighted_Models:
             mySequences = Sequence.applyFixDurationThreshold(mySequences, fixDurThreshold)
 
         if simplify:
-            mySequences = Sequence.simplifySequence(mySequences)
+            sequenceBackup = dict(mySequences)
+            mySequences = simplifySequence(mySequences)
 
         keys = list(mySequences)
         # creating dictionary of AOIS
@@ -54,6 +55,9 @@ class Position_based_Weighted_Models:
         result = ""
         for i in range (0, 3):
             result =  result + sorted_d[i][0]
+
+        if simplify:
+            mySequences = sequenceBackup
 
         res_data = calcSimilarityForDataset(mySequences, list(result),self.my_dataset.aois)
         for keys,values in res_data.items():

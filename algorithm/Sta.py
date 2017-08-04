@@ -283,13 +283,13 @@ class Sta:
     def sta_run(self, simplify=False, fixDurThreshold=None, mod=1):
         """
         Args:
-            simplify: urcuje ci redukovat opakujuce sa fixacie za sebou na jednu
-            fixDurThreshold: minimalna dlzka trvania fixacie
-            mod: 1 vytvori standardny scanpath z AOI
-                 2 vytvori scanpah na zaklade dlzky sakad
-                 3 vytvori scanpath na zaklade dlzky trvania fixacii
-                 4 vytvori scanpath na zaklade relativnych uhlov sakad0
-                 5 vytvori scanpath na zaklade absolutnych uhlov sakad
+            simplify: reduction of repeated characters
+            fixDurThreshold: miniimal length of fixation
+            mod: 1 create scanpath from AOI
+                 2 create scanpath based on length of fixation
+                 3 create scanpath based on duration of fixation
+                 4 create scanpath based on relative angles
+                 5 create scanpath based on absolute angles
 
         Returns:
 
@@ -307,6 +307,7 @@ class Sta:
             mySequences = applyFixDurationThreshold(mySequences, fixDurThreshold)
 
         if simplify:
+            sequenceBackup = dict(mySequences)
             mySequences = simplifySequence(mySequences)
 
         # First-Pass
@@ -336,6 +337,9 @@ class Sta:
             commonSequence.append(myFinalList[y][0])
 
         common_scanpath = self.getAbstractedSequence(commonSequence)
+
+        if simplify:
+            mySequences = sequenceBackup
 
         res_data = calcSimilarityForDataset(mySequences, common_scanpath, self.my_dataset.aois)
 
