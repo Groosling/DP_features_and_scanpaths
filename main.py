@@ -1,6 +1,7 @@
 from algorithm.Sta import *
 from algorithm.Position_based_Weighted_Models import *
 from algorithm.Dotplot import *
+from algorithm.Spam import *
 import time
 from structure import Sequence
 from configparser import ConfigParser
@@ -15,6 +16,14 @@ from display.ScanpathPlotter import ScanpathPlotter
 ALGORITHM_STA = 1
 ALGORITHM_PBWM = 2
 ALGORITHM_DOTPLOT = 3
+ALGORITHM_SPAM = 4
+
+def spamAlgorithm(my_dataset, myEnv):
+    start_time = time.time()
+    spam = Spam(my_dataset, my_env)
+    res_data = spam.spamRun(True)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    return res_data
 
 def staAlgorithm(my_dataset, myEnv):
     start_time = time.time()
@@ -50,6 +59,7 @@ def applyCommonScanpathAlgorithm(my_dataset, myEnv, mod):
         mod:     1 apply STA
                  2 apply Position Based Weighted Models
                  3 apply Dotplot
+                 4 apply SPAM
     Returns: common scanpath
 
     """
@@ -57,6 +67,7 @@ def applyCommonScanpathAlgorithm(my_dataset, myEnv, mod):
       1: staAlgorithm,
       2: positionBasedWeightedModelsAlgorithm,
       3: dotplotAlgorithm,
+      4: spamAlgorithm,
     }
     myFunc = case[mod]
     return myFunc(my_dataset, myEnv)
@@ -79,7 +90,7 @@ if __name__ == "__main__":
     )
     my_env = Environment(0.5, 60, 1920, 1200, 17)
 
-    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_PBWM)
+    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_SPAM)
 
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
@@ -106,6 +117,9 @@ if __name__ == "__main__":
     #
     # mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
     # processed_sequence = Sequence.applyFixDurationThreshold(mySequences)
+
+
+
 
     if res_data is None:
         res_data = {}
