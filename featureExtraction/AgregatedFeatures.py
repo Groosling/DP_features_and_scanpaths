@@ -23,23 +23,23 @@ def calculateAgregatedFeatures(basicFeatures):
     meanBool = bool(int(config.get('aggregFeatures', 'mean')))
     stdBool = bool(int(config.get('aggregFeatures', 'std')))
 
-    participants = []
+    participants = {}
     keys = list(basicFeatures)
     for y in range(0, len(keys)):
-        features = []
+        features = {}
         for z in range(0, len(listOfFeatures)):
 
             #  if given basic featue doesn't exists, ignore it
-            if listOfFeatures[z] not in basicFeatures[list(keys[y])]:
+            if listOfFeatures[z] not in basicFeatures[keys[y]]:
                 continue
-
+            features[listOfFeatures[z]] = {}
             if sumBool:
-                features.append(np.sum(basicFeatures[keys[y]][listOfFeatures[z]]))
+                features[listOfFeatures[z]]["sum"] = np.sum(basicFeatures[keys[y]][listOfFeatures[z]])
             if meanBool:
-                features.append(np.mean(basicFeatures[keys[y]][listOfFeatures[z]]))
+                features[listOfFeatures[z]]["mean"] = np.mean(basicFeatures[keys[y]][listOfFeatures[z]])
             if stdBool:
-                features.append(np.std(basicFeatures[keys[y]][listOfFeatures[z]]))
-        participants.append(features)
+                features[listOfFeatures[z]]["stdev"] = np.std(basicFeatures[keys[y]][listOfFeatures[z]])
+        participants[keys[y]] = features
     return participants
 
 
