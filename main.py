@@ -50,6 +50,11 @@ def dotplotAlgorithm(my_dataset, myEnv):
     print("--- %s seconds ---" % (time.time() - start_time))
     return res_data
 
+def applyCommonScanpatAlgoritmusOnDatasets(datasets, myEnv, algoritmusIndentifier):
+    results = []
+    for dataset in datasets:
+        results.append(applyCommonScanpathAlgorithm(dataset, myEnv, algoritmusIndentifier))
+    return results
 
 def applyCommonScanpathAlgorithm(my_dataset, myEnv, mod):
     """
@@ -89,9 +94,10 @@ if __name__ == "__main__":
                         parser.get('run', 'websiteName'),
     )
     my_env = Environment(0.5, 60, 1920, 1200, 17)
+    datasetGroups = my_dataset.getDatasetDividedIntoGroups()
 
-    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_SPAM)
-
+    # res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_SPAM)
+    results = applyCommonScanpatAlgoritmusOnDatasets(datasetGroups,  my_env, ALGORITHM_SPAM)
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
     # sequence = Sequence.getArrayRepresentationOfSequence(sequence)
