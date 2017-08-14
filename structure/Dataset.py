@@ -1,5 +1,7 @@
 from os import listdir
-
+import copy
+from configparser import ConfigParser
+import codecs
 
 # TODO class should store all the sequences/scanpaths instead of receiving them via function arguments
 # TODO the same goes for error area - once calculated set it as property
@@ -7,6 +9,10 @@ class Dataset:
     """Common class for grouping a set of scanpaths together"""
 
     def __init__(self, file_path_scanpaths, file_path_aoi, file_path_visual, website_name):
+        self.parser = ConfigParser()
+        # Open the file with the correct encoding
+        with codecs.open('config.ini', 'r', encoding='utf-8') as f:
+            self.parser.readfp(f)
         # Initialize attributes
         self.FIXATION_INDEX = 0
         self.TIME_INDEX = 0
@@ -141,3 +147,28 @@ class Dataset:
                     min_similar['identifier'] = similarity_iter
             # Assign max_similarity object to scanpath (in JSON-style)
             scanpath['minSimilarity'] = min_similar
+
+    def getDatasetDividedIntoGroups(self):
+        # load separation of participant into groups
+        listOfGroups= []
+        counter = 1
+        while counter:
+            try:
+                listOfGroups.append(self.parser.get('participants', 'group' + str(counter)).split('\n'))
+                counter+=1
+            except:
+                break
+        # create copies of loaded dataset with particular participants of the groups
+        listOfDatasets = []
+        for group in listOfGroups:
+            tempDataset = copy.copy(self)
+            tempDataset.participants = {}
+            for participant in group:
+                if participant in self.participants:
+                    tempDataset.participants[participant] = self.participants[participant]
+            listOfDatasets.append(tempDataset)
+        return listOfDatasets
+
+
+
+
