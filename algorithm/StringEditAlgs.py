@@ -65,20 +65,22 @@ def calc_similarity(scanpath_strs):
 def calc_similarity_to_common(scanpath_strs, scanpath_common, substitution_Matrix, aoisPositionsDict):
     # Object storing similarities of each individual scanpath to the common one
     similarity_obj = {}
-    len_common = len(scanpath_common)
     # Calculate similarity of each scanpath to the common (trending) scanpath
+    common = ''.join(str(ch) for ch in scanpath_common)
     for scanpath_str in scanpath_strs:
-        edit_distance = levenshtein(scanpath_str['raw_str'], scanpath_common, substitution_Matrix, aoisPositionsDict)
-        len_act = len(scanpath_str['raw_str'])
-        # Calculate similarity as edit 1 - distance/length(longer string)
-        # Non-integer division (python future import)
-        similarity = 1 - (edit_distance / (len_act if len_act > len_common else len_common))
-        # Set similarity as percentage
-        similarity *= 100
-
-        similarity_obj[scanpath_str['identifier']] = similarity
+        similarity_obj[scanpath_str['identifier']] = calcSimilarityBetweenTwoScanpaths(scanpath_str["raw_str"], common, substitution_Matrix, aoisPositionsDict)
 
     return similarity_obj
+
+def calcSimilarityBetweenTwoScanpaths(scanpath1, scanpath2, substitution_Matrix, aoisPositionsDict):
+    len_common = len(scanpath2)
+    edit_distance = levenshtein(scanpath1, scanpath2, substitution_Matrix, aoisPositionsDict)
+    len_act = len(scanpath1)
+    # Calculate similarity as edit 1 - distance/length(longer string)
+    # Non-integer division (python future import)
+    similarity = 1 - (edit_distance / (len_act if len_act > len_common else len_common))
+    # Set similarity as percentage
+    return similarity * 100
 
 
 def levenshtein(s1, s2, substitution_Matrix, aoisPositionsDict):
@@ -96,7 +98,9 @@ def levenshtein(s1, s2, substitution_Matrix, aoisPositionsDict):
             insertions = previous_row[
                              j + 1] + 1  # j+1 instead of j since previous_row and current_row are one character longer
             deletions = current_row[j] + 1  # than s2
-            substitutions = previous_row[j] + (c1 != c2) * substitution_Matrix [aoisPositionsDict[c1]][aoisPositionsDict[c2]]
+            # use this line if you want to take in to account substitution matrix
+            # substitutions = previous_row[j] + (c1 != c2) * substitution_Matrix [aoisPositionsDict[c1]][aoisPositionsDict[c2]]
+            substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
         previous_row = current_row
 
@@ -129,7 +133,26 @@ def calcSimilarityForDataset(mySequence, common_scanpath, aois):
         'similarity': calc_similarity_to_common(scanpath_strs, common_scanpath, substitution_Matrix, aoisPositionsDict)
     }
     result['OverAllSimilarity'] = np.mean(list(result['similarity'].values()))
+    result['interParticipantsSimilarities'] = calculateInterParticipantsScanpathSimilarities(scanpath_strs, substitution_Matrix, aoisPositionsDict)
     return result
+
+def calculateInterParticipantsScanpathSimilarities(scanpathStrs, substitution_Matrix, aoisPositionsDict):
+    listOfSimilarities = {}
+    listOfSimilarities["all"] = []
+    for actualParticipantIndex in range(0, len(scanpathStrs)):
+        for i in range(0, len(scanpathStrs)):
+            if i > actualParticipantIndex:
+                listOfSimilarities["all"].append(calcSimilarityBetweenTwoScanpaths(scanpathStrs[actualParticipantIndex]['raw_str'],
+                                                                                 scanpathStrs[i]['raw_str'],
+                                                                                 substitution_Matrix,
+                                                                                 aoisPositionsDict))
+
+    listOfSimilarities["min"] =  np.min(listOfSimilarities["all"])
+    listOfSimilarities["max"] =  np.max(listOfSimilarities["all"])
+    listOfSimilarities["avg"] =  np.average(listOfSimilarities["all"])
+    listOfSimilarities["std"] =  np.std(listOfSimilarities["all"])
+    return listOfSimilarities
+
 def calcSubstitutionMatrix(aois):
     matrix = []
     # calculateDistance(aois[0], aois[1])

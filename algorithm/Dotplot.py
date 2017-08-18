@@ -123,13 +123,10 @@ class Dotplot:
             mySequences = Sequence.applyFixDurationThreshold(mySequences, fixDurThreshold)
 
         if simplify:
-            sequenceBackup = dict(mySequences)
             mySequences = simplifySequence(mySequences)
 
         stringSequences = Sequence.getStringRepresentation(mySequences)
 
-        if simplify:
-            mySequences = sequenceBackup
 
         res_data = calcSimilarityForDataset(mySequences, list(self.findCommonSequence(stringSequences)),self.my_dataset.aois)
         for keys,values in res_data.items():

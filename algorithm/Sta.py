@@ -307,7 +307,6 @@ class Sta:
             mySequences = applyFixDurationThreshold(mySequences, fixDurThreshold)
 
         if simplify:
-            sequenceBackup = dict(mySequences)
             mySequences = simplifySequence(mySequences)
 
         # First-Pass
@@ -338,8 +337,6 @@ class Sta:
 
         common_scanpath = self.getAbstractedSequence(commonSequence)
 
-        if simplify:
-            mySequences = sequenceBackup
 
         res_data = calcSimilarityForDataset(mySequences, common_scanpath, self.my_dataset.aois)
 

@@ -47,7 +47,6 @@ class Spam:
             mySequences = applyFixDurationThreshold(mySequences, fixDurThreshold)
 
         if simplify:
-            sequenceBackup = dict(mySequences)
             mySequences = simplifySequence(mySequences)
         participantsList, mapOfAois = self.codeAoiInNumbers(mySequences)
 
@@ -93,8 +92,6 @@ class Spam:
 
     # ---------- Read FILE END------------------
 
-        if simplify:
-            mySequences = sequenceBackup
 
         aoisPositionsDict = {}
         for scanpath  in common_scanpaths:

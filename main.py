@@ -29,7 +29,7 @@ def spamAlgorithm(my_dataset, myEnv):
 def staAlgorithm(my_dataset, myEnv):
     start_time = time.time()
     sta = Sta(my_dataset, my_env)
-    res_data = sta.sta_run(mod=1)
+    res_data = sta.sta_run(mod=1, simplify=True)
     print("--- %s seconds ---" % (time.time() - start_time))
     return res_data
 
@@ -95,15 +95,15 @@ if __name__ == "__main__":
                         parser.get('run', 'websiteName'),
     )
     my_env = Environment(0.5, 60, 1920, 1200, 17)
-    listOfDataset = my_dataset.getDatasetDividedIntoGroups()
+    # listOfDataset = my_dataset.getDatasetDividedIntoGroups()
+    # results = applyCommonScanpatAlgoritmusOnDatasets(listOfDataset,  my_env, ALGORITHM_SPAM)
 
-    # res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_SPAM)
-    results = applyCommonScanpatAlgoritmusOnDatasets(listOfDataset,  my_env, ALGORITHM_SPAM)
+    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_STA)
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
     # sequence = Sequence.getArrayRepresentationOfSequence(sequence)
-    basicFeatures = BasicFeatures.calculateBasicFeatures(my_dataset.participants)
-    result = AgregatedFeatures.calculateAgregatedFeatures(basicFeatures)
+    # basicFeatures = BasicFeatures.calculateBasicFeatures(my_dataset.participants)
+    # result = AgregatedFeatures.calculateAgregatedFeatures(basicFeatures)
 
     # averageValuesForDataset = compareDatasets(basicFeatures)
     # vec1 = Sequence.calculateVector(0, 0, 2, 2)
