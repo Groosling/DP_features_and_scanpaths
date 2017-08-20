@@ -43,9 +43,11 @@ class Position_based_Weighted_Models:
 
         # vytvorenie histogramu
         for y in range(0, len(keys)):
-             aois[mySequences[keys[y]][0][0]] = aois[mySequences[keys[y]][0][0]] + 1
-             aois[mySequences[keys[y]][1][0]] = aois[mySequences[keys[y]][1][0]] + 0.5
-             aois[mySequences[keys[y]][2][0]] = aois[mySequences[keys[y]][2][0]] + 0.2
+             print(y)
+             if len(mySequences[keys[y]]) > 2:
+                 aois[mySequences[keys[y]][0][0]] = aois[mySequences[keys[y]][0][0]] + 1
+                 aois[mySequences[keys[y]][1][0]] = aois[mySequences[keys[y]][1][0]] + 0.5
+                 aois[mySequences[keys[y]][2][0]] = aois[mySequences[keys[y]][2][0]] + 0.2
 
         # zoradi dictionary do pola
         sorted_d = sorted(aois.items(), reverse=True, key=operator.itemgetter(1))

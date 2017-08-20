@@ -22,7 +22,7 @@ ALGORITHM_SPAM = 4
 def spamAlgorithm(my_dataset, myEnv):
     start_time = time.time()
     spam = Spam(my_dataset, my_env)
-    res_data = spam.spamRun(True)
+    res_data = spam.spamRun(mod=1, simplify=True)
     print("--- %s seconds ---" % (time.time() - start_time))
     return res_data
 
@@ -36,7 +36,7 @@ def staAlgorithm(my_dataset, myEnv):
 def positionBasedWeightedModelsAlgorithm(my_dataset, myEnv):
     start_time = time.time()
     pbwm  = Position_based_Weighted_Models(my_dataset)
-    res_data = pbwm.run_PBWM(mod=1)
+    res_data = pbwm.run_PBWM(mod=1,simplify=True,)
     print (res_data)
 
     print("--- %s seconds ---" % (time.time() - start_time))
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     # listOfDataset = my_dataset.getDatasetDividedIntoGroups()
     # results = applyCommonScanpatAlgoritmusOnDatasets(listOfDataset,  my_env, ALGORITHM_SPAM)
 
-    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_STA)
+    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_SPAM)
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
     # sequence = Sequence.getArrayRepresentationOfSequence(sequence)

@@ -92,7 +92,7 @@ class Sta:
 
         if len(commonAoIs) == 0:
             print ("No shared instances!")
-            exit(1)
+            return None
 
         minValueCounter = commonAoIs[0][1]
         for AoIdetails in commonAoIs:
@@ -316,6 +316,11 @@ class Sta:
             mySequences_num[keys[y]] = self.getNumberedSequence(mySequences[keys[y]])
 
         myImportanceThreshold = self.calculateImportanceThreshold(mySequences_num)
+        if myImportanceThreshold == None:
+            res_data = calcSimilarityForDataset(mySequences, "", self.my_dataset.aois)
+            self.printResults(res_data)
+            return res_data
+
         myImportantAoIs = self.updateAoIsFlag(self.getNumberDurationOfAoIs(mySequences_num), myImportanceThreshold)
         myNewSequences = self.removeInsignificantAoIs(mySequences_num, myImportantAoIs)
 
@@ -339,14 +344,16 @@ class Sta:
 
 
         res_data = calcSimilarityForDataset(mySequences, common_scanpath, self.my_dataset.aois)
-
+        self.printResults(res_data)
         # to get JSON use return str(sta_run()) when calling this alg
         # return json.dumps(res_data)
-        for keys,values in res_data.items():
+        return res_data
+
+    def printResults(self, results):
+        for keys,values in results.items():
             print(keys)
             print(values)
 
-        return res_data
 
     """  ked uz mas custom scanpath """
     def custom_run(self, custom_scanpath):
