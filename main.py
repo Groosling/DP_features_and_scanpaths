@@ -10,6 +10,7 @@ from featureExtraction import BasicFeatures
 from featureExtraction import AgregatedFeatures
 from featureExtraction.AoiFeatures import *
 from featureExtraction.AngleFeatures import *
+from featureExtraction.EmdatAdapter import extractFeatures, loadResults
 from display.ScanpathPlotter import ScanpathPlotter
 from comparison.FeatureComparison import *
 
@@ -78,6 +79,8 @@ def applyCommonScanpathAlgorithm(my_dataset, myEnv, mod):
     myFunc = case[mod]
     return myFunc(my_dataset, myEnv)
 
+def calulateFeatures(dataset):
+    extractFeatures(dataset)
 
 if __name__ == "__main__":
     parser = ConfigParser()
@@ -95,10 +98,17 @@ if __name__ == "__main__":
                         parser.get('run', 'websiteName'),
     )
     my_env = Environment(0.5, 60, 1920, 1200, 17)
-    # listOfDataset = my_dataset.getDatasetDividedIntoGroups()
-    # results = applyCommonScanpatAlgoritmusOnDatasets(listOfDataset,  my_env, ALGORITHM_SPAM)
+    listOfDataset = my_dataset.getDatasetDividedIntoGroups()
 
-    res_data = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_SPAM)
+    calulateFeatures(my_dataset)
+    features = loadResults()
+    print(features)
+
+    # more datasets
+    # results = applyCommonScanpatAlgoritmusOnDatasets(listOfDataset,  my_env, ALGORITHM_PBWM)
+    # one dataset
+    # results = applyCommonScanpathAlgorithm(my_dataset, my_env, ALGORITHM_PBWM)
+
 
     # sequence = Sequence.createSequences(my_dataset, mod=1)
     # sequence = Sequence.getArrayRepresentationOfSequence(sequence)
@@ -129,18 +139,19 @@ if __name__ == "__main__":
 
 
 
-    if res_data is None:
-        res_data = {}
-        res_data['fixations'] = []
-    scanPathPlotter = ScanpathPlotter()
-    commonScanpathPositions =scanPathPlotter.scanpathToPlotRepresentation(res_data['fixations'], my_dataset.aois)
-    keys = list(my_dataset.participants.keys())
-    for key in keys:
-        scanPath = scanPathPlotter.participantToPlotRepresentation(my_dataset.participants[key])
-        scanPathPlotter.plot2D("Participant " + key,
-                               "Participant " + key,
-                               parser.get('run', 'backgroundPageImage'),
-                               scanPath,
-                               commonScanpathPositions,
-                                firstScanpathLegend=key
-                              )
+    # if res_data is None:
+    #     res_data = {}
+    #     res_data['fixations'] = []
+    # scanPathPlotter = ScanpathPlotter()
+    # commonScanpathPositions =scanPathPlotter.scanpathToPlotRepresentation(res_data['fixations'], my_dataset.aois)
+    # keys = list(my_dataset.participants.keys())
+    # for key in keys:
+    #     scanPath = scanPathPlotter.participantToPlotRepresentation(my_dataset.participants[key])
+    #     scanPathPlotter.plot2D("Participant " + key,
+    #                            "Participant " + key,
+    #                            parser.get('run', 'backgroundPageImage'),
+    #                            scanPath,
+    #                            commonScanpathPositions,
+    #                             firstScanpathLegend=key
+    #                           )
+
