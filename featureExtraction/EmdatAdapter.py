@@ -46,7 +46,7 @@ def loadResults():
                 features[participantName][columnCaptions[j]] = lineList[j]
     return features
 
-def extractFeatures(dataset):
+def extractBasicFeatures(dataset):
     prepareAOIFile(dataset)
     prepareSegFile(dataset)
     keys = list(dataset.participants.keys())

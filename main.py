@@ -10,7 +10,8 @@ from featureExtraction import BasicFeatures
 from featureExtraction import AgregatedFeatures
 from featureExtraction.AoiFeatures import *
 from featureExtraction.AngleFeatures import *
-from featureExtraction.EmdatAdapter import extractFeatures, loadResults
+from featureExtraction.EmdatAdapter import extractBasicFeatures, loadResults
+from featureExtraction.RqaAdapter import extractRQAFeatures, createFileForRQADemo
 from display.ScanpathPlotter import ScanpathPlotter
 from comparison.FeatureComparison import *
 
@@ -80,7 +81,7 @@ def applyCommonScanpathAlgorithm(my_dataset, myEnv, mod):
     return myFunc(my_dataset, myEnv)
 
 def calulateFeatures(dataset):
-    extractFeatures(dataset)
+    extractBasicFeatures(dataset)
 
 if __name__ == "__main__":
     parser = ConfigParser()
@@ -100,9 +101,17 @@ if __name__ == "__main__":
     my_env = Environment(0.5, 60, 1920, 1200, 17)
     listOfDataset = my_dataset.getDatasetDividedIntoGroups()
 
+    # basic features
+    # """
     calulateFeatures(my_dataset)
     features = loadResults()
     print(features)
+    # """
+
+    # RQA Features
+    rqaFeatures = extractRQAFeatures(my_dataset)
+    print(5)
+    # createFileForRQADemo(my_dataset)
 
     # more datasets
     # results = applyCommonScanpatAlgoritmusOnDatasets(listOfDataset,  my_env, ALGORITHM_PBWM)
