@@ -1,7 +1,9 @@
 from os import listdir
 import copy
+import pandas as pd
 from configparser import ConfigParser
 import codecs
+import numpy as np
 
 # TODO class should store all the sequences/scanpaths instead of receiving them via function arguments
 # TODO the same goes for error area - once calculated set it as property
@@ -148,16 +150,20 @@ class Dataset:
             # Assign max_similarity object to scanpath (in JSON-style)
             scanpath['minSimilarity'] = min_similar
 
-    def getDatasetDividedIntoGroups(self):
-        # load separation of participant into groups
-        listOfGroups= []
+    def getListOfGroups(self):
+        listOfGroups = []
         counter = 1
         while counter:
             try:
                 listOfGroups.append(self.parser.get('participants', 'group' + str(counter)).split('\n'))
-                counter+=1
+                counter += 1
             except:
                 break
+        return listOfGroups
+
+    def getDatasetDividedIntoGroups(self):
+        # load separation of participant into groups
+        listOfGroups= self.getListOfGroups()
         # create copies of loaded dataset with particular participants of the groups
         listOfDatasets = []
         for group in listOfGroups:
@@ -168,6 +174,18 @@ class Dataset:
                     tempDataset.participants[participant] = self.participants[participant]
             listOfDatasets.append(tempDataset)
         return listOfDatasets
+
+    def getPredictedColumnValues(self):
+        listOfGroups = self.getListOfGroups()
+        counter = 0
+        dataframe = pd.DataFrame()
+        for group in listOfGroups:
+            d = pd.DataFrame(counter, index=group, columns=['predicted'])
+            dataframe = pd.concat([dataframe, d], axis=0)
+            counter += 1
+        return dataframe
+
+
 
 
 

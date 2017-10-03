@@ -1,20 +1,21 @@
-from algorithm.Sta import *
-from algorithm.Position_based_Weighted_Models import *
-from algorithm.Dotplot import *
-from algorithm.Spam import *
 import time
-from structure import Sequence
+from algorithm.Dotplot import *
+from algorithm.Position_based_Weighted_Models import *
+from algorithm.Spam import *
+from algorithm.Sta import *
+from featureExtraction.EmdatAdapter import extractBasicFeatures, loadResults
+from featureExtraction.RqaAdapter import extractRQAFeatures
+from classification.DataframeTransfomer import featuresToDataframe, loadDataFrame, saveDataframe
+from classification.SVM import testModel
+from classification.Correlations import *
+
 from configparser import ConfigParser
 import codecs
-from featureExtraction import BasicFeatures
-from featureExtraction import AgregatedFeatures
-from featureExtraction.AoiFeatures import *
-from featureExtraction.AngleFeatures import *
-from featureExtraction.EmdatAdapter import extractBasicFeatures, loadResults
-from featureExtraction.RqaAdapter import extractRQAFeatures, createFileForRQADemo
-from display.ScanpathPlotter import ScanpathPlotter
-from comparison.FeatureComparison import *
 
+config = ConfigParser()
+# Open the file with the correct encoding
+with codecs.open('config.ini', 'r', encoding='utf-8') as f:
+    config.readfp(f)
 
 ALGORITHM_STA = 1
 ALGORITHM_PBWM = 2
@@ -101,16 +102,47 @@ if __name__ == "__main__":
     my_env = Environment(0.5, 60, 1920, 1200, 17)
     listOfDataset = my_dataset.getDatasetDividedIntoGroups()
 
-    # basic features
-    # """
-    calulateFeatures(my_dataset)
-    features = loadResults()
-    print(features)
-    # """
+    """ Prepare features """
+    allFeatures = []
+    dataset  = my_dataset
+    if not bool(int(config.get('classification', 'useCsv'))):
+        # basic features
+        # """
+        calulateFeatures(dataset)
+        features = loadResults()
+        allFeatures.append(features)
+        print(features)
+        # """
 
-    # RQA Features
-    rqaFeatures = extractRQAFeatures(my_dataset)
+        # RQA Features
+        rqaFeatures = extractRQAFeatures(dataset)
+        allFeatures.append(rqaFeatures)
+        dataframe = featuresToDataframe(allFeatures)
+        saveDataframe(dataframe)
+    else:
+        dataframe = loadDataFrame()
+    dfPredicted = my_dataset.getPredictedColumnValues()
+
+    """  calculate Correlations"""
+    correlations = Correlations()
+    correlations.calculateCorrelations(dataframe, dfPredicted)
+    # correlations.plotBoxplot()
+    # correlations.plotPairsSeaborn()
+    columnNames = correlations.getBestColumnNames(10)
+    dataframe = dataframe[columnNames]
+
+    """ train and test model """
+    testModel(dataframe,dfPredicted)
+
     print(5)
+
+    # TODO Skusit odstanit outlayerov  - to neviem ci chcem
+    # TODO skusit dostat featury zo scanpathov
+    # TODO pozret si mozno nieco k tomu ako davat na zakladny tvar slova vo vyhladavani info
+
+
+
+
     # createFileForRQADemo(my_dataset)
 
     # more datasets
