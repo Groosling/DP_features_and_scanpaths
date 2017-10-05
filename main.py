@@ -39,28 +39,30 @@ if __name__ == "__main__":
     my_env = Environment(0.5, 60, 1920, 1200, 17)
     listOfDataset = my_dataset.getDatasetDividedIntoGroups()
 
+    """ Scanpath features """
     calculateScanpathFeatures(listOfDataset, my_env)
 
-    # """ Prepare features """
+    """ Prepare features """
     # allFeatures = []
     # dataset  = my_dataset
     # if not bool(int(config.get('classification', 'useCsv'))):
-    #     # basic features
-    #     # """
-    #     calulateFeatures(dataset)
-    #     features = loadResults()
-    #     allFeatures.append(features)
-    #     print(features)
-    #     # """
-    #
-    #     # RQA Features
-    #     rqaFeatures = extractRQAFeatures(dataset)
-    #     allFeatures.append(rqaFeatures)
-    #     dataframe = featuresToDataframe(allFeatures)
-    #     saveDataframe(dataframe)
+        # basic features
+        # """
+        # calulateFeatures(dataset)
+        # features = loadResults()
+        # allFeatures.append(features)
+        # print(features)
+        # """
+
+        # RQA Features
+        # rqaFeatures = extractRQAFeatures(dataset)
+        # allFeatures.append(rqaFeatures)
+
+        # dataframe = featuresToDataframe(allFeatures)
+        # saveDataframe(dataframe)
     # else:
     #     dataframe = loadDataFrame()
-    # dfPredicted = my_dataset.getPredictedColumnValues()
+    dfPredicted = my_dataset.getPredictedColumnValues()
     #
     # """  calculate Correlations"""
     # correlations = Correlations()
@@ -75,9 +77,8 @@ if __name__ == "__main__":
 
     print(5)
 
-    # TODO Skusit odstanit outlayerov  - to neviem ci chcem
     # TODO skusit dostat featury zo scanpathov
-    # TODO pozret si mozno nieco k tomu ako davat na zakladny tvar slova vo vyhladavani info
+
 
 
 

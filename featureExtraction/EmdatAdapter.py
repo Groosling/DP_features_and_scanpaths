@@ -13,7 +13,7 @@ def runEMDAT(args):
     check_output(parser.get('EMDAT', 'python27Path') + " libs/EMDAT/src/customTest.py" + args, shell=True).decode()
 
 def prepareAOIFile(dataset):
-    file = open("customData/splav.aoi", 'w')
+    file = open("data/allData//aois.aoi", 'w')
     for aoi in dataset.aois:
         file.write(aoi[0] + "\t" + aoi[1]         + "," + aoi[3]                         + "\t" +
                    str(int(aoi[1]) + int(aoi[2])) + "," + aoi[3]                         + "\t" +
@@ -22,7 +22,7 @@ def prepareAOIFile(dataset):
     file.close()
 
 def prepareSegFile(dataset):
-    outputFile = open("customData/TobiiV3_sample.seg", 'w')
+    outputFile = open("data/allData/TobiiV3_sample.seg", 'w')
     outputFile.write("problem1	S1	" + str(1) + "	" + str(99999999))
     outputFile.close()
 

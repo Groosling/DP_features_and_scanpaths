@@ -12,7 +12,7 @@ def createFileForRQADemo(dataset):
     for key in keys:
         results = {}
         fixations = []
-        outputFile = open("outputfolder/" + key + ".txt", 'w')
+        outputFile = open("output/RQA/" + key + ".txt", 'w')
         for fixation in dataset.participants[key]:
             outputFile.write( fixation[3] + "," + fixation[4] + "," + fixation[2] + "\n")
         outputFile.close()
