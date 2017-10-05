@@ -21,11 +21,11 @@ class Position_based_Weighted_Models:
         Returns:
 
         """
-
         mySequences = Sequence.createSequences(self.my_dataset, mod)
-        for keys, values in mySequences.items():
-            print(keys)
-            print(values)
+        """ Write Sequences of participants to console"""
+        # for keys, values in mySequences.items():
+        #     print(keys)
+        #     print(values)
 
         mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
 
@@ -35,6 +35,7 @@ class Position_based_Weighted_Models:
         if simplify:
             mySequences = simplifySequence(mySequences)
 
+
         keys = list(mySequences)
         # creating dictionary of AOIS
         aois = {}
@@ -43,7 +44,6 @@ class Position_based_Weighted_Models:
 
         # vytvorenie histogramu
         for y in range(0, len(keys)):
-             print(y)
              if len(mySequences[keys[y]]) > 2:
                  aois[mySequences[keys[y]][0][0]] = aois[mySequences[keys[y]][0][0]] + 1
                  aois[mySequences[keys[y]][1][0]] = aois[mySequences[keys[y]][1][0]] + 0.5

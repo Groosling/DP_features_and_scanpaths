@@ -1,10 +1,7 @@
-import time
-from algorithm.Dotplot import *
-from algorithm.Position_based_Weighted_Models import *
-from algorithm.Spam import *
-from algorithm.Sta import *
+
 from featureExtraction.EmdatAdapter import extractBasicFeatures, loadResults
 from featureExtraction.RqaAdapter import extractRQAFeatures
+from featureExtraction.ScanpathFeatures import *
 from classification.DataframeTransfomer import featuresToDataframe, loadDataFrame, saveDataframe
 from classification.SVM import testModel
 from classification.Correlations import *
@@ -17,69 +14,9 @@ config = ConfigParser()
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     config.readfp(f)
 
-ALGORITHM_STA = 1
-ALGORITHM_PBWM = 2
-ALGORITHM_DOTPLOT = 3
-ALGORITHM_SPAM = 4
-
-def spamAlgorithm(my_dataset, myEnv):
-    start_time = time.time()
-    spam = Spam(my_dataset, my_env)
-    res_data = spam.spamRun(mod=1, simplify=True)
-    print("--- %s seconds ---" % (time.time() - start_time))
-    return res_data
-
-def staAlgorithm(my_dataset, myEnv):
-    start_time = time.time()
-    sta = Sta(my_dataset, my_env)
-    res_data = sta.sta_run(mod=1, simplify=True)
-    print("--- %s seconds ---" % (time.time() - start_time))
-    return res_data
-
-def positionBasedWeightedModelsAlgorithm(my_dataset, myEnv):
-    start_time = time.time()
-    pbwm  = Position_based_Weighted_Models(my_dataset)
-    res_data = pbwm.run_PBWM(mod=1,simplify=True,)
-    print (res_data)
-
-    print("--- %s seconds ---" % (time.time() - start_time))
-    return res_data
 
 
-def dotplotAlgorithm(my_dataset, myEnv):
-    start_time = time.time()
-    dotplot = Dotplot(my_dataset, my_env)
-    res_data = dotplot.runDotplot(simplify=True, mod=1)
-    # print (common_sequence)
-    print("--- %s seconds ---" % (time.time() - start_time))
-    return res_data
 
-def applyCommonScanpatAlgoritmusOnDatasets(datasets, myEnv, algoritmusIndentifier):
-    results = []
-    for dataset in datasets:
-        results.append(applyCommonScanpathAlgorithm(dataset, myEnv, algoritmusIndentifier))
-    return results
-
-def applyCommonScanpathAlgorithm(my_dataset, myEnv, mod):
-    """
-    Apply algorithm for extraction of common scanpath
-    Args:
-        my_dataset: dataset
-        mod:     1 apply STA
-                 2 apply Position Based Weighted Models
-                 3 apply Dotplot
-                 4 apply SPAM
-    Returns: common scanpath
-
-    """
-    case = {
-      1: staAlgorithm,
-      2: positionBasedWeightedModelsAlgorithm,
-      3: dotplotAlgorithm,
-      4: spamAlgorithm,
-    }
-    myFunc = case[mod]
-    return myFunc(my_dataset, myEnv)
 
 def calulateFeatures(dataset):
     extractBasicFeatures(dataset)
@@ -102,43 +39,64 @@ if __name__ == "__main__":
     my_env = Environment(0.5, 60, 1920, 1200, 17)
     listOfDataset = my_dataset.getDatasetDividedIntoGroups()
 
-    """ Prepare features """
-    allFeatures = []
-    dataset  = my_dataset
-    if not bool(int(config.get('classification', 'useCsv'))):
-        # basic features
-        # """
-        calulateFeatures(dataset)
-        features = loadResults()
-        allFeatures.append(features)
-        print(features)
-        # """
+    calculateScanpathFeatures(listOfDataset, my_env)
 
-        # RQA Features
-        rqaFeatures = extractRQAFeatures(dataset)
-        allFeatures.append(rqaFeatures)
-        dataframe = featuresToDataframe(allFeatures)
-        saveDataframe(dataframe)
-    else:
-        dataframe = loadDataFrame()
-    dfPredicted = my_dataset.getPredictedColumnValues()
-
-    """  calculate Correlations"""
-    correlations = Correlations()
-    correlations.calculateCorrelations(dataframe, dfPredicted)
-    # correlations.plotBoxplot()
-    # correlations.plotPairsSeaborn()
-    columnNames = correlations.getBestColumnNames(10)
-    dataframe = dataframe[columnNames]
-
-    """ train and test model """
-    testModel(dataframe,dfPredicted)
+    # """ Prepare features """
+    # allFeatures = []
+    # dataset  = my_dataset
+    # if not bool(int(config.get('classification', 'useCsv'))):
+    #     # basic features
+    #     # """
+    #     calulateFeatures(dataset)
+    #     features = loadResults()
+    #     allFeatures.append(features)
+    #     print(features)
+    #     # """
+    #
+    #     # RQA Features
+    #     rqaFeatures = extractRQAFeatures(dataset)
+    #     allFeatures.append(rqaFeatures)
+    #     dataframe = featuresToDataframe(allFeatures)
+    #     saveDataframe(dataframe)
+    # else:
+    #     dataframe = loadDataFrame()
+    # dfPredicted = my_dataset.getPredictedColumnValues()
+    #
+    # """  calculate Correlations"""
+    # correlations = Correlations()
+    # correlations.calculateCorrelations(dataframe, dfPredicted)
+    # # correlations.plotBoxplot()
+    # # correlations.plotPairsSeaborn()
+    # columnNames = correlations.getBestColumnNames(10)
+    # dataframe = dataframe[columnNames]
+    #
+    # """ train and test model """
+    # testModel(dataframe,dfPredicted)
 
     print(5)
 
     # TODO Skusit odstanit outlayerov  - to neviem ci chcem
     # TODO skusit dostat featury zo scanpathov
     # TODO pozret si mozno nieco k tomu ako davat na zakladny tvar slova vo vyhladavani info
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

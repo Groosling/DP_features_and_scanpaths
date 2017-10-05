@@ -37,9 +37,10 @@ class Spam:
         """
         mySequences = createSequences(self.my_dataset, mod)
 
-        for keys,values in mySequences.items():
-            print(keys)
-            print(values)
+        """ Write Sequences of participants to console"""
+        # for keys,values in mySequences.items():
+        #     print(keys)
+        #     print(values)
 
         mySequences = getArrayRepresentationOfSequence(mySequences)
 

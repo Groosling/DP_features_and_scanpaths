@@ -114,9 +114,10 @@ class Dotplot:
         mySequences = Sequence.createSequences(self.my_dataset, mod)
 
         # mySequences = Sequence.createSequences(self.my_dataset, errorRateArea)
-        for keys, values in mySequences.items():
-            print(keys)
-            print(values)
+        """ Write Sequences of participants to console"""
+        # for keys, values in mySequences.items():
+        #     print(keys)
+        #     print(values)
         mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
 
         if fixDurThreshold is not None:
