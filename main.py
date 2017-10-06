@@ -3,7 +3,7 @@ from featureExtraction.EmdatAdapter import extractBasicFeatures, loadResults
 from featureExtraction.RqaAdapter import extractRQAFeatures
 from featureExtraction.ScanpathFeatures import *
 from classification.DataframeTransfomer import featuresToDataframe, loadDataFrame, saveDataframe
-from classification.SVM import testModel
+from classification.Classifier import *
 from classification.Correlations import *
 
 from configparser import ConfigParser
@@ -17,10 +17,6 @@ with codecs.open('config.ini', 'r', encoding='utf-8') as f:
 
 
 
-
-def calulateFeatures(dataset):
-    extractBasicFeatures(dataset)
-
 if __name__ == "__main__":
     parser = ConfigParser()
     # Open the file with the correct encoding
@@ -28,52 +24,69 @@ if __name__ == "__main__":
         parser.readfp(f)
 
     # Storage for all loaded data
-
+    # TODO spravit nech to robi v cykle pre vsetko v konfiguraku
     # Environment in which the eye tracking experiment was performed
-    my_dataset = Dataset(
-                        parser.get('run', 'scanpathFilePath'),
-                        parser.get('run', 'AoiFilePath'),
-                        'static/images/datasets/template_sta/placeholder.png', # default stuff
-                        parser.get('run', 'websiteName'),
-    )
-    my_env = Environment(0.5, 60, 1920, 1200, 17)
-    listOfDataset = my_dataset.getDatasetDividedIntoGroups()
+    scanpathFilePaths = parser.get('run', 'scanpathFilePaths').split("\n")
+    aoiFilePaths = parser.get('run', 'aoiFilePaths').split("\n")
+    websiteNames = parser.get('run', 'websiteNames').split("\n")
+    backgroundPageImages = parser.get('run', 'backgroundPageImages').split("\n")
+    dataframes = []
+    for i in range(0, len(scanpathFilePaths)):
+        data = {}
 
-    """ Scanpath features """
-    calculateScanpathFeatures(listOfDataset, my_env)
+        my_dataset = Dataset(
+                            scanpathFilePaths[i],
+                            aoiFilePaths[i],
+                            'static/images/datasets/template_sta/placeholder.png', # default stuff
+                            websiteNames[i],
+        )
+        my_env = Environment(0.5, 60, 1920, 1200, 17)
+        listOfDataset = my_dataset.getDatasetDividedIntoGroups()
 
-    """ Prepare features """
-    # allFeatures = []
-    # dataset  = my_dataset
-    # if not bool(int(config.get('classification', 'useCsv'))):
-        # basic features
-        # """
-        # calulateFeatures(dataset)
-        # features = loadResults()
-        # allFeatures.append(features)
-        # print(features)
-        # """
+        """ Scanpath features """
+        # calculateScanpathFeatures(listOfDataset, my_env)
 
-        # RQA Features
-        # rqaFeatures = extractRQAFeatures(dataset)
-        # allFeatures.append(rqaFeatures)
+        """ Prepare features """
+        allFeatures = []
+        dataset  = my_dataset
+        if not bool(int(config.get('classification', 'useCsv'))):
+            # basic features
+            # """
+            extractBasicFeatures(dataset, i+1)
+            features = loadResults()
+            allFeatures.append(features)
+            print(features)
+            # """
 
-        # dataframe = featuresToDataframe(allFeatures)
-        # saveDataframe(dataframe)
-    # else:
-    #     dataframe = loadDataFrame()
-    dfPredicted = my_dataset.getPredictedColumnValues()
-    #
-    # """  calculate Correlations"""
-    # correlations = Correlations()
-    # correlations.calculateCorrelations(dataframe, dfPredicted)
-    # # correlations.plotBoxplot()
-    # # correlations.plotPairsSeaborn()
-    # columnNames = correlations.getBestColumnNames(10)
-    # dataframe = dataframe[columnNames]
-    #
-    # """ train and test model """
-    # testModel(dataframe,dfPredicted)
+            # RQA Features
+            rqaFeatures = extractRQAFeatures(dataset)
+            allFeatures.append(rqaFeatures)
+
+            dataframe = featuresToDataframe(allFeatures)
+            saveDataframe(dataframe, i+1)
+        else:
+            # load
+            data["data"] = loadDataFrame(i+1)
+            # delete ignored
+            if 'tester18' in data["data"].index:
+                data["data"].drop(["tester18"], inplace=True)
+            # select just important columns
+            data["data"] = data["data"][parser.get('classification', 'columnNames').split("\n")]
+            data["predicted"] = my_dataset.getPredictedColumnValues()
+
+        dataframes.append(data)
+        #
+        # """  calculate Correlations"""
+        # correlations = Correlations()
+        # correlations.calculateCorrelations(dataframe, dfPredicted)
+        # # correlations.plotBoxplot()
+        # # correlations.plotPairsSeaborn()
+        # columnNames = correlations.getBestColumnNames(10)
+        # dataframe = dataframe[columnNames]
+        #
+        # """ train and test model """
+    classifier= Classifier()
+    classifier.testModel(dataframes)
 
     print(5)
 

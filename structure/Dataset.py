@@ -183,6 +183,7 @@ class Dataset:
             d = pd.DataFrame(counter, index=group, columns=['predicted'])
             dataframe = pd.concat([dataframe, d], axis=0)
             counter += 1
+        dataframe.drop(["tester18"], inplace=True)
         return dataframe
 
 

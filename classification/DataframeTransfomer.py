@@ -15,11 +15,11 @@ def featuresToDataframe(listOfDictionaryofDictionaries):
     dataframe.index.name = "participant"
     return dataframe
 
-def saveDataframe(dataframe):
-    dataframe.to_csv(config.get('classification', 'csvPath'))
+def saveDataframe(dataframe, taskId):
+    dataframe.to_csv(config.get('classification', 'csvPath').format(taskId=str(taskId)))
 
-def loadDataFrame():
-    df = pd.read_csv(config.get('classification', 'csvPath'), index_col='participant')
+def loadDataFrame(taskId):
+    df = pd.read_csv(config.get('classification', 'csvPath').format(taskId=str(taskId)), index_col='participant')
     ignoredPaticipants = config.get('participants', 'ignored').split("\n")
     df.drop(ignoredPaticipants, inplace=True)
     return df

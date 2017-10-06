@@ -9,11 +9,11 @@ with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     parser.readfp(f)
 
 
-def runEMDAT(args):
-    check_output(parser.get('EMDAT', 'python27Path') + " libs/EMDAT/src/customTest.py" + args, shell=True).decode()
+def runEMDAT(args, taskId):
+    check_output(parser.get('EMDAT', 'python27Path') + " libs/EMDAT/src/customTest.py " + str(taskId) + args, shell=True).decode()
 
 def prepareAOIFile(dataset):
-    file = open("data/allData//aois.aoi", 'w')
+    file = open("data/allData/aois.aoi", 'w')
     for aoi in dataset.aois:
         file.write(aoi[0] + "\t" + aoi[1]         + "," + aoi[3]                         + "\t" +
                    str(int(aoi[1]) + int(aoi[2])) + "," + aoi[3]                         + "\t" +
@@ -46,7 +46,7 @@ def loadResults():
                 features[participantName][columnCaptions[j]] = lineList[j]
     return features
 
-def extractBasicFeatures(dataset):
+def extractBasicFeatures(dataset, taskID):
     prepareAOIFile(dataset)
     prepareSegFile(dataset)
     keys = list(dataset.participants.keys())
@@ -54,7 +54,7 @@ def extractBasicFeatures(dataset):
     for key in keys:
     # for key in keys:
         args += " " + key
-    runEMDAT(args)
+    runEMDAT(args, taskID)
     loadResults()
 
 
