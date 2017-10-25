@@ -4,8 +4,10 @@ from sklearn.model_selection import cross_val_score
 from sklearn import svm
 from scipy.stats import zscore
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from statistics import mean
+import itertools
 
 import math
 import numpy as np
@@ -44,19 +46,28 @@ class Classifier:
             self.DF_MAX = df.max()
         return (df - self.DF_MEAN) / (self.DF_MAX - self.DF_MIN)
 
+    def featureSelection(self, allData):
+        for data in allData:
+            data["data"].drop(["tester21",
+                               "tester12",
+                               "tester23",
+                               "tester24",
+                               "tester11"], inplace=True)
+
+            data["predicted"].drop(["tester21", "tester12", "tester23", "tester24", "tester11"], inplace=True)
+        # allData = allData[:1]
+        return allData
 
 
     def testModel(self, allData):
         scores = []
-        for data in allData:
-            data["data"].drop(["tester21", "tester12", "tester23", "tester24", "tester11"], inplace=True)
-            data["predicted"].drop(["tester21", "tester12", "tester23", "tester24", "tester11"], inplace=True)
-        allData = allData[:4]
+        allData = self.featureSelection(allData)
         for i in range(5):
             xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=i*53, splitRatio=0.4)
-            clf = KNeighborsClassifier(n_neighbors=1)
+            # clf = KNeighborsClassifier(n_neighbors=1)
+            # clf = RandomForestClassifier()
             clf = svm.SVC(kernel='rbf', class_weight='balanced', C=1, gamma=0.0001)
-            # xTrainDf = self.normalizeDataframe(xTrainDf, trainng=True)
+            xTrainDf = self.normalizeDataframe(xTrainDf, trainng=True)
             clf.fit(xTrainDf, yTrainDf["predicted"].tolist())
             xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
             dfPredicted = clf.predict(xTestDf)

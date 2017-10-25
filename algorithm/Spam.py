@@ -49,7 +49,15 @@ class Spam:
 
         if simplify:
             mySequences = simplifySequence(mySequences)
-        participantsList, mapOfAois = self.codeAoiInNumbers(mySequences)
+
+        maxFinalScanpathLength = int(parser.get('sequence', 'maxFinalScanpathLength'))
+        #shorten the sequnces
+        for key, value in mySequences.items():
+            if len(value) > 10:
+                mySequences[key] = value[:maxFinalScanpathLength]
+        filteredSequences = filterOutParticipantsWithLowSimilarityToOthers(mySequences, self.my_dataset.aois)
+
+        participantsList, mapOfAois = self.codeAoiInNumbers(filteredSequences)
 
         INPUT_FILE = parser.get('spam', 'inputFilepath')
         OUTPUT_FILE = parser.get('spam', 'outputFilepath')
@@ -99,10 +107,13 @@ class Spam:
             scanpath["similarity"] = calcSimilarityForDataset(mySequences, scanpath["scanpath"], self.my_dataset.aois)
 
         maxSimilarityItem = max(common_scanpaths, key=lambda x: x['similarity']['OverAllSimilarity'])
-
-        for keys,values in maxSimilarityItem['similarity'].items():
-            print(keys)
-            print(values)
+        print("SPAM")
+        print("-----------------------------------------------")
+        print( maxSimilarityItem['similarity']["fixations"])
+        # for keys,values in maxSimilarityItem['similarity'].items():
+        #     print(keys)
+        #     print(values)
+        maxSimilarityItem['similarity']["sequences"] = mySequences
         return maxSimilarityItem['similarity']
 
 

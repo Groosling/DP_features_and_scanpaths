@@ -20,6 +20,7 @@ def saveDataframe(dataframe, taskId):
 
 def loadDataFrame(taskId):
     df = pd.read_csv(config.get('classification', 'csvPath').format(taskId=str(taskId)), index_col='participant')
-    ignoredPaticipants = config.get('participants', 'ignored').split("\n")
-    df.drop(ignoredPaticipants, inplace=True)
+    # ignoredPaticipants = config.get('participants', 'ignored').split("\n")
+    # if len( ignoredPaticipants) > 0:
+    #     df.drop(ignoredPaticipants, inplace=True)
     return df

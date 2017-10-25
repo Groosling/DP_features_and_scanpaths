@@ -35,16 +35,13 @@ if __name__ == "__main__":
         data = {}
 
         my_dataset = Dataset(
-                            scanpathFilePaths[i],
-                            aoiFilePaths[i],
-                            'static/images/datasets/template_sta/placeholder.png', # default stuff
-                            websiteNames[i],
+            scanpathFilePaths[i],
+            aoiFilePaths[i],
+            'static/images/datasets/template_sta/placeholder.png', # default stuff
+            websiteNames[i],
         )
         my_env = Environment(0.5, 60, 1920, 1200, 17)
         listOfDataset = my_dataset.getDatasetDividedIntoGroups()
-
-        """ Scanpath features """
-        # calculateScanpathFeatures(listOfDataset, my_env)
 
         """ Prepare features """
         allFeatures = []
@@ -62,7 +59,15 @@ if __name__ == "__main__":
             rqaFeatures = extractRQAFeatures(dataset)
             allFeatures.append(rqaFeatures)
 
+
             dataframe = featuresToDataframe(allFeatures)
+            if 'tester10' in dataframe.index:
+                dataframe.drop(["tester10"], inplace=True)
+
+            """ Scanpath features """
+            scanpathFeaturesDf = calculateScanpathFeatures(listOfDataset, my_env)
+            # scanpathFeaturesDf.drop(["tester10"], inplace=True)
+            dataframe = pd.concat([dataframe, scanpathFeaturesDf], axis=1)
             saveDataframe(dataframe, i+1)
         else:
             # load
@@ -75,18 +80,30 @@ if __name__ == "__main__":
             data["predicted"] = my_dataset.getPredictedColumnValues()
 
         dataframes.append(data)
-        #
-        # """  calculate Correlations"""
-        # correlations = Correlations()
-        # correlations.calculateCorrelations(dataframe, dfPredicted)
-        # # correlations.plotBoxplot()
-        # # correlations.plotPairsSeaborn()
-        # columnNames = correlations.getBestColumnNames(10)
-        # dataframe = dataframe[columnNames]
-        #
+
+
+
+    #
+    # """  calculate Correlations"""
+    # dfTrain = pd.DataFrame()
+    # dfPredicted = pd.DataFrame()
+    # for dataframe in dataframes:
+    #     dfTrain = pd.concat([dfTrain, dataframe["data"]], axis=0)
+    #     dfPredicted = pd.concat([dfPredicted, dataframe["predicted"]], axis=0)
+    #
+    #
+    # correlations = Correlations()
+    # correlations.calculateCorrelations(dfTrain, dfPredicted)
+    # correlations.plotBoxplot()
+    # correlations.plotPairsSeaborn()
+    # columnNames = correlations.getBestColumnNames(10)
+    # dataframe = dataframe[columnNames]
+
+
+
         # """ train and test model """
-    classifier= Classifier()
-    classifier.testModel(dataframes)
+    # classifier= Classifier()
+    # classifier.testModel(dataframes)
 
     print(5)
 

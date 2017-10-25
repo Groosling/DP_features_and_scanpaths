@@ -11,6 +11,9 @@ class Correlations:
 
     def calculateCorrelations(self, dfData, dfPredicted):
         self.sortedCorrelationsName = []
+        length = len(dfData.index.values.tolist())
+        dfData = dfData.reset_index()
+        dfPredicted = dfPredicted.reset_index()
         self.dfData = pd.concat([dfData, dfPredicted], axis=1)
         tmp = self.dfData.corr(method='spearman')["predicted"]
         self.correlations = tmp.drop("predicted").abs().sort_values(ascending=False)

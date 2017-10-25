@@ -106,6 +106,43 @@ def levenshtein(s1, s2, substitution_Matrix, aoisPositionsDict):
 
     return previous_row[-1]
 
+def filterOutParticipantsWithLowSimilarityToOthers(mySequence, aois):
+    """
+     returns just participants with similarities to others in group that is higher than
+     percentile defined in config
+    """
+    percentile = 0
+    if bool(int(parser.get('sequence', 'cutOffSequencesWitLoweSimilarityThanPercentile'))):
+        percentile = int(parser.get('sequence', 'percentile'))
+    aoisPositionsDict = {}
+    for i in range(0, len(aois)):
+        aoisPositionsDict[aois[i][5]] = i
+
+    substitution_Matrix = calcSubstitutionMatrix(aois)
+    formatted_sequences = get_formatted_sequences(mySequence)
+    # Store scanpaths as an array of string-converted original scanpaths
+    scanpathStrs = convert_to_strs(formatted_sequences)
+    dictOfSimilarities = {}
+    dictOfAverages = {}
+    for actualParticipantIndex in range(0, len(scanpathStrs)):
+        dictOfSimilarities[scanpathStrs[actualParticipantIndex]['identifier']] = []
+        for i in range(0, len(scanpathStrs)):
+            if actualParticipantIndex != i:
+                dictOfSimilarities[scanpathStrs[actualParticipantIndex]['identifier']].append(
+                    calcSimilarityBetweenTwoScanpaths(scanpathStrs[actualParticipantIndex]['raw_str'],
+                                                      scanpathStrs[i]['raw_str'],
+                                                      substitution_Matrix,
+                                                      aoisPositionsDict))
+        dictOfAverages[scanpathStrs[actualParticipantIndex]['identifier']] = np.mean(dictOfSimilarities[scanpathStrs[actualParticipantIndex]['identifier']])
+
+    percentileValue = np.percentile(list(dictOfAverages.values()), percentile)
+    dictOfResults = {k: v for (k, v) in dictOfAverages.items() if v >= percentileValue}
+    resultKeys = list(dictOfResults.keys())
+    resultSequences = dict((k, mySequence[k]) for k in resultKeys)
+    # print("----------------------------")
+    # print("Overall average:" + str(np.mean(list(dictOfAverages.values()))))
+    # print("Overall percentile:" + str(np.percentile(list(dictOfAverages.values()), 10)))
+    return resultSequences
 
 def calcSimilarityForDataset(mySequence, common_scanpath, aois):
     """

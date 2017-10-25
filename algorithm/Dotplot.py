@@ -2,12 +2,19 @@ from structure import Sequence
 
 from operator import itemgetter, attrgetter
 from algorithm.StringEditAlgs import *
+from configparser import ConfigParser
+import codecs
+
 
 class Dotplot:
 
     def __init__(self, my_dataset, my_env):
         self.my_dataset = my_dataset
         self.my_env = my_env
+        parser = ConfigParser()
+        # Open the file with the correct encoding
+        with codecs.open('config.ini', 'r', encoding='utf-8') as f:
+            parser.readfp(f)
 
     def dotplotListofLists(self, sequenceX, sequenceY):
         # fill matrix with zeroes
@@ -126,11 +133,22 @@ class Dotplot:
         if simplify:
             mySequences = simplifySequence(mySequences)
 
-        stringSequences = Sequence.getStringRepresentation(mySequences)
+        maxFinalScanpathLength = int(parser.get('sequence', 'maxFinalScanpathLength'))
+        #shorten the sequnces
+        for key, value in mySequences.items():
+            if len(value) > 10:
+                mySequences[key] = value[:maxFinalScanpathLength]
+        filteredSequences = filterOutParticipantsWithLowSimilarityToOthers(mySequences, self.my_dataset.aois)
+        stringSequences = Sequence.getStringRepresentation(filteredSequences)
 
 
         res_data = calcSimilarityForDataset(mySequences, list(self.findCommonSequence(stringSequences)),self.my_dataset.aois)
-        for keys,values in res_data.items():
-            print(keys)
-            print(values)
+        print("DOTPLOT")
+        print("-----------------------------------------------")
+        print(res_data["fixations"])
+
+        # for keys,values in res_data.items():
+        #     print(keys)
+        #     print(values)
+        res_data["sequences"] = mySequences
         return res_data

@@ -12,6 +12,10 @@ class Sta:
     def __init__(self, my_dataset, my_env):
         self.my_dataset = my_dataset
         self.my_env = my_env
+        self.parser = ConfigParser()
+        # Open the file with the correct encoding
+        with codecs.open('config.ini', 'r', encoding='utf-8') as f:
+            self.parser.readfp(f)
 
 
 
@@ -309,16 +313,24 @@ class Sta:
         if simplify:
             mySequences = simplifySequence(mySequences)
 
+        maxFinalScanpathLength = int(parser.get('sequence', 'maxFinalScanpathLength'))
+        #shorten the sequnces
+        for key, value in mySequences.items():
+            if len(value) > 10:
+                mySequences[key] = value[:maxFinalScanpathLength]
+        filteredSequences = filterOutParticipantsWithLowSimilarityToOthers(mySequences, self.my_dataset.aois)
+
         # First-Pass
         mySequences_num = {}
-        keys = list(mySequences)
+        keys = list(filteredSequences)
         for y in range(0, len(keys)):
-            mySequences_num[keys[y]] = self.getNumberedSequence(mySequences[keys[y]])
+            mySequences_num[keys[y]] = self.getNumberedSequence(filteredSequences[keys[y]])
 
         myImportanceThreshold = self.calculateImportanceThreshold(mySequences_num)
         if myImportanceThreshold == None:
             res_data = calcSimilarityForDataset(mySequences, "", self.my_dataset.aois)
             self.printResults(res_data)
+            res_data["sequences"] = mySequences
             return res_data
 
         myImportantAoIs = self.updateAoIsFlag(self.getNumberDurationOfAoIs(mySequences_num), myImportanceThreshold)
@@ -344,15 +356,20 @@ class Sta:
 
 
         res_data = calcSimilarityForDataset(mySequences, common_scanpath, self.my_dataset.aois)
+
         self.printResults(res_data)
         # to get JSON use return str(sta_run()) when calling this alg
         # return json.dumps(res_data)
+        res_data["sequences"] = mySequences
         return res_data
 
     def printResults(self, results):
-        for keys,values in results.items():
-            print(keys)
-            print(values)
+        print("STA")
+        print("-----------------------------------------------")
+        print(results["fixations"])
+        # for keys,values in results.items():
+        #     print(keys)
+        #     print(values)
 
 
     """  ked uz mas custom scanpath """
