@@ -32,19 +32,20 @@ class Dotplot:
         lengthSubsequence = 0
 
         # right part of matrix
-        for i in range(0, len(dotplotMatrix[0])):
-            # reamining x length or height of matrix
-            sum = 0
-            for j in range(0, min(len(dotplotMatrix[0]) - i, len(dotplotMatrix))):
-                sum = sum + dotplotMatrix[j][i + j]
-                # print dotplotMatrix[j][i + j]
-            if sum > lengthSubsequence:
-                # sequence created by characters with value 1
-                lengthSubsequence = sum
-                commonSubSequence = ""
+        if len(dotplotMatrix) > 0:
+            for i in range(0, len(dotplotMatrix[0])):
+                # reamining x length or height of matrix
+                sum = 0
                 for j in range(0, min(len(dotplotMatrix[0]) - i, len(dotplotMatrix))):
-                    if dotplotMatrix[j][i + j] == 1:
-                        commonSubSequence = commonSubSequence + sequenceX[i + j]
+                    sum = sum + dotplotMatrix[j][i + j]
+                    # print dotplotMatrix[j][i + j]
+                if sum > lengthSubsequence:
+                    # sequence created by characters with value 1
+                    lengthSubsequence = sum
+                    commonSubSequence = ""
+                    for j in range(0, min(len(dotplotMatrix[0]) - i, len(dotplotMatrix))):
+                        if dotplotMatrix[j][i + j] == 1:
+                            commonSubSequence = commonSubSequence + sequenceX[i + j]
 
 
         # left part of the matrix

@@ -3,6 +3,7 @@ import copy
 import pandas as pd
 from configparser import ConfigParser
 import codecs
+import csv
 import numpy as np
 
 # TODO class should store all the sequences/scanpaths instead of receiving them via function arguments
@@ -38,63 +39,35 @@ class Dataset:
 
 
     def load_participants(self):
-        # Fetch all files in specified folder
-        # files_list = listdir(self.file_path_scanpaths)
-
-        # for filename in files_list:
-        if self.file_path_scanpaths.endswith(self.data_file_format):
-            try:
-                fo = open(self.file_path_scanpaths, "r")
-            except:
-                print ("Failed to open specified file - skipping to next one")
-                return
-            act_file_content = fo.read()
-
-            act_file_lines = act_file_content.split('\n')
-            act_file_data = []
-
-            # Read the file by lines (skip the first one with description)
-            for y in range(0, len(act_file_lines) - 1):
-                # if y = 0 get column of particular information we need
-                if y ==0:
-                    # find indeces of required columns
-                    column_captions =act_file_lines[y].split('\t')
-                    self.FIXATION_INDEX = column_captions.index("FixationIndex")
-                    self.TIME_INDEX = column_captions.index("RecordingTimestamp")
-                    self.DUR_INDEX = column_captions.index("GazeEventDuration")
-                    self.XPOINT_INDEX = column_captions.index("FixationPointX (MCSpx)")
-                    self.YPOINT_INDEX = column_captions.index("FixationPointY (MCSpx)")
-                    self.PAGE_NAME_INDEX = column_captions.index("MediaName")
-                    self.PARTICIPANT_NAME_INDEX = column_captions.index("ParticipantName")
-                else:
-
-                    try:
-                        temp_act_file_line = ""
-                        # If the page name argument matches the page name specified in file
-                        if act_file_lines[y].index(self.website_name) > 0:
-                            # Read the data in columns by splitting via tab character
-                            temp_act_file_line = act_file_lines[y].split('\t')
-
-                            # clear data on visit of first line of new participant
-                            if self.last_participant_name != temp_act_file_line[self.PARTICIPANT_NAME_INDEX]:
-                                act_file_data = []
-                                self.last_participant_name = temp_act_file_line[self.PARTICIPANT_NAME_INDEX]
-
-                            act_file_data.append([str(int(temp_act_file_line[self.FIXATION_INDEX]) - 1),
-                                                  temp_act_file_line[self.TIME_INDEX],
-                                                  temp_act_file_line[self.DUR_INDEX],
-                                                  temp_act_file_line[self.XPOINT_INDEX],
-                                                  temp_act_file_line[self.YPOINT_INDEX],
-                                                  temp_act_file_line[self.PAGE_NAME_INDEX],
-                            ])
-                    except:
-                        print ("Invalid data format - line will be skipped")
-                        continue
-
-                    # Return object containing array of fixations (each fixation is also an array)
-                    participant_identifier = temp_act_file_line[self.PARTICIPANT_NAME_INDEX]
-                    self.participants[participant_identifier] = act_file_data
-            fo.close()
+        act_file_data = []
+        currentfix = 0
+        with open(self.file_path_scanpaths, 'r') as f:
+            currentfix = 0
+            reader = csv.DictReader(f, delimiter='\t')
+            for row in reader:
+                if row["MediaName"].split(" ")[0] != self.website_name:  # ignore non-recording data point
+                    continue
+                if not row["ValidityLeft"] or not row["ValidityRight"] or not row["FixationPointX (MCSpx)"] or not \
+                row["FixationPointY (MCSpx)"]:  # ignore data point with no information
+                    continue
+                if row["GazeEventType"] != "Fixation" or currentfix == currentfix == int(row["FixationIndex"]):
+                    # if not a fixation or the current fixation
+                    continue
+                # clear data on visit of first line of new participant
+                if self.last_participant_name !=row["ParticipantName"]:
+                    act_file_data = []
+                    self.last_participant_name = row["ParticipantName"]
+                act_file_data.append([str(int(row["FixationIndex"]) - 1),
+                                      row["RecordingTimestamp"],
+                                      row["GazeEventDuration"],
+                                      row["FixationPointX (MCSpx)"],
+                                      row["FixationPointY (MCSpx)"],
+                                      row["MediaName"].split(" ")[0],
+                                      ])
+                participant_identifier = row["ParticipantName"]
+                self.participants[participant_identifier] = act_file_data
+                currentfix = int(row["FixationIndex"])
+        f.close()
 
     def load_aois(self):
         """

@@ -66,7 +66,6 @@ if __name__ == "__main__":
 
             """ Scanpath features """
             scanpathFeaturesDf = calculateScanpathFeatures(listOfDataset, my_env)
-            # scanpathFeaturesDf.drop(["tester10"], inplace=True)
             dataframe = pd.concat([dataframe, scanpathFeaturesDf], axis=1)
             saveDataframe(dataframe, i+1)
         else:

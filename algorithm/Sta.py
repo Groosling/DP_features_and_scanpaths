@@ -243,7 +243,7 @@ class Sta:
         return valuableAoIs
 
 
-    # TODO presunut do dataset classy
+
     def get_edit_distances(self, scanpaths):
         # Store scanpaths as an array of string-converted original scanpaths
         scanpath_strs = convert_to_strs(scanpaths)
@@ -371,44 +371,3 @@ class Sta:
         #     print(keys)
         #     print(values)
 
-
-    """  ked uz mas custom scanpath """
-    def custom_run(self, custom_scanpath):
-        myErrorRateArea = self.my_env.get_error_rate_area()
-        mySequences = createSequencesBasedOnVisualElements(self.my_dataset, myErrorRateArea)
-
-        keys = list(mySequences)
-        for y in range(0, len(keys)):
-            mySequences[keys[y]] = mySequences[keys[y]].split('.')
-            del mySequences[keys[y]][len(mySequences[keys[y]]) - 1]
-        for y in range(0, len(keys)):
-            for z in range(0, len(mySequences[keys[y]])):
-                mySequences[keys[y]][z] = mySequences[keys[y]][z].split('-')
-
-        formatted_sequences = self.my_dataset.get_formatted_sequences(mySequences)
-
-        # Store scanpaths as an array of string-converted original scanpaths
-        scanpath_strs = convert_to_strs(formatted_sequences)
-
-        custom_scanpath_arr = []
-        for i in range (0, len(custom_scanpath)):
-            custom_scanpath_arr.append(custom_scanpath[i])
-
-        res_data = {
-            'fixations': custom_scanpath_arr,
-            'similarity': calc_similarity_to_common(scanpath_strs, custom_scanpath_arr)
-        }
-
-        # to get JSON use return str(sta_run()) when calling this alg
-        return json.dumps(res_data)
-
-if __name__ == "__main__":
-    # Storage for all loaded data
-    my_dataset = Dataset('data/template_sta/scanpaths/DOD2016_fixations_2_participants.tsv',
-                         'data/template_sta/regions/seg_FIIT_page.txt',
-                         'static/images/datasets/template_sta/placeholder.png',
-                         'http://www.fiit.stuba.sk/')
-    # Environment in which the eye tracking experiment was performed
-    my_env = Environment(0.5, 60, 1920, 1200, 17)
-    # sta_run(my_env, my_dataset)
-    # custom_run()
