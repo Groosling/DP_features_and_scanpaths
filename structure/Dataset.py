@@ -45,7 +45,7 @@ class Dataset:
             currentfix = 0
             reader = csv.DictReader(f, delimiter='\t')
             for row in reader:
-                if row["MediaName"].split(" ")[0] != self.website_name:  # ignore non-recording data point
+                if self.website_name not in row["MediaName"].split(" ")[0] :  # ignore non-recording data point
                     continue
                 if not row["ValidityLeft"] or not row["ValidityRight"] or not row["FixationPointX (MCSpx)"] or not \
                 row["FixationPointY (MCSpx)"]:  # ignore data point with no information
