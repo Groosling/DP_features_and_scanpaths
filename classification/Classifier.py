@@ -32,6 +32,7 @@ class Classifier:
         yTrainDf = pd.DataFrame()
         yTestDf = pd.DataFrame()
         for data in allData:
+
             xTrain, xTest, yTrain, yTest = train_test_split(data["data"], data["predicted"], test_size=splitRatio, random_state=seed)
             xTrainDf = pd.concat([xTrainDf, xTrain])
             xTestDf = pd.concat([xTestDf, xTest])
@@ -49,19 +50,19 @@ class Classifier:
     def featureSelection(self, allData):
         for data in allData:
             data["data"].drop(["tester21",
-                               "tester12",
-                               "tester23",
-                               "tester24",
-                               "tester11"], inplace=True)
 
-            data["predicted"].drop(["tester21", "tester12", "tester23", "tester24", "tester11"], inplace=True)
+                               "tester23",
+                               "tester24"
+                              ], inplace=True)
+
+            data["predicted"].drop(["tester21", "tester23", "tester24"], inplace=True)
         # allData = allData[:1]
         return allData
 
 
     def testModel(self, allData):
         scores = []
-        allData = self.featureSelection(allData)
+        # allData = self.featureSelection(allData)
         for i in range(5):
             xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=i*53, splitRatio=0.4)
             # clf = KNeighborsClassifier(n_neighbors=1)
@@ -71,12 +72,9 @@ class Classifier:
             clf.fit(xTrainDf, yTrainDf["predicted"].tolist())
             xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
             dfPredicted = clf.predict(xTestDf)
-            print(dfPredicted)
+            # print(dfPredicted)
             scores.append(self.getScores(yTestDf["predicted"].tolist(), dfPredicted))
             print(self.getScores(yTestDf["predicted"].tolist(), dfPredicted))
         print("Crossvalidation average: ")
         print("------------------------")
         print(*map(mean, zip(*scores)))
-
-
-        print(5)

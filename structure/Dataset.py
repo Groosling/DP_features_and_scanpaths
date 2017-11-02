@@ -50,7 +50,7 @@ class Dataset:
                 if not row["ValidityLeft"] or not row["ValidityRight"] or not row["FixationPointX (MCSpx)"] or not \
                 row["FixationPointY (MCSpx)"]:  # ignore data point with no information
                     continue
-                if row["GazeEventType"] != "Fixation" or currentfix == currentfix == int(row["FixationIndex"]):
+                if row["GazeEventType"] != "Fixation" or currentfix == int(row["FixationIndex"]):
                     # if not a fixation or the current fixation
                     continue
                 # clear data on visit of first line of new participant

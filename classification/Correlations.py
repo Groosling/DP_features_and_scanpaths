@@ -2,14 +2,41 @@ import pandas as pd
 from pandas import Series
 import seaborn as sns
 
+from configparser import ConfigParser
+import codecs
+
+config = ConfigParser()
+# Open the file with the correct encoding
+with codecs.open('config.ini', 'r', encoding='utf-8') as f:
+    config.readfp(f)
+
 class Correlations:
     def __init__(self):
         self.dfData = pd.DataFrame()
         self.correlations = pd.Series()
         self.sortedCorrelationsName = []
 
+    def deleteHighlyCorrelatedAttributes(self, dfInterAttributesCorrelation, dictCorrTopredicted):
+        resultColumns = dict(dictCorrTopredicted)
+        threshold = float(config.get("correlations", "interAttributesCorrThreshold"))
+        for index, row in dfInterAttributesCorrelation.iterrows():
+            for column in dfInterAttributesCorrelation:
+                # if comapring same attributes... skip
+                if dfInterAttributesCorrelation.columns.get_loc(column) == dfInterAttributesCorrelation.index.get_loc(index):
+                    continue
+                # pop less correlatet attribute
+                if row[column] > threshold:
+                    resultColumns.pop(column, None) if dictCorrTopredicted[index] > dictCorrTopredicted[column] else resultColumns.pop(index, None)
+        return list(resultColumns.keys())
 
-    def calculateCorrelations(self, dfData, dfPredicted):
+
+    def calculateInterAttributesCorrelations(self, df):
+        correlations = df.corr(method='spearman').abs();
+        # for i in range(0, correlations.shape[0]):
+            # print(correlations.index.values[i] + ": " + str(correlations.values[i]))
+        return correlations
+
+    def calculateCorrelationsToPredicted(self, dfData, dfPredicted):
         self.sortedCorrelationsName = []
         length = len(dfData.index.values.tolist())
         dfData = dfData.reset_index()
@@ -17,10 +44,13 @@ class Correlations:
         self.dfData = pd.concat([dfData, dfPredicted], axis=1)
         tmp = self.dfData.corr(method='spearman')["predicted"]
         self.correlations = tmp.drop("predicted").abs().sort_values(ascending=False)
+        result = {}
         i = 0
         for i in range(self.correlations.size):
-            print(self.correlations.index.values[i] + ": " + str(self.correlations.values[i]))
+            # print(self.correlations.index.values[i] + ": " + str(self.correlations.values[i]))
             self.sortedCorrelationsName.append(self.correlations.index.values[i])
+            result[self.correlations.index.values[i]] = self.correlations.values[i]
+        return result
 
 
     def plotBoxplot(self):
