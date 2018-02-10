@@ -120,13 +120,17 @@ class Dotplot:
         """
 
         mySequences = Sequence.createSequences(self.my_dataset, mod)
-
+        temp = dict(mySequences)
+        for k,v in temp.items():
+            if v == "":
+                del mySequences[k]
         # mySequences = Sequence.createSequences(self.my_dataset, errorRateArea)
         """ Write Sequences of participants to console"""
         # for keys, values in mySequences.items():
         #     print(keys)
         #     print(values)
         mySequences = Sequence.getArrayRepresentationOfSequence(mySequences)
+
 
         if fixDurThreshold is not None:
             mySequences = Sequence.applyFixDurationThreshold(mySequences, fixDurThreshold)

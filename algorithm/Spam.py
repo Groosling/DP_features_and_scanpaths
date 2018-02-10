@@ -36,7 +36,10 @@ class Spam:
 
         """
         mySequences = createSequences(self.my_dataset, mod)
-
+        temp = dict(mySequences)
+        for k, v in temp.items():
+            if v == "":
+                del mySequences[k]
         """ Write Sequences of participants to console"""
         # for keys,values in mySequences.items():
         #     print(keys)
