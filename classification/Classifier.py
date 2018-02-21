@@ -13,6 +13,16 @@ import math
 import numpy as np
 import pandas as pd
 
+
+from configparser import ConfigParser
+import codecs
+
+config = ConfigParser()
+# Open the file with the correct encoding
+with codecs.open('config.ini', 'r', encoding='utf-8') as f:
+    config.readfp(f)
+
+
 class Classifier:
     def __init__(self):
         self.DF_MEAN = pd.DataFrame()
@@ -23,7 +33,7 @@ class Classifier:
     def getScores(self,yTrue, yPredicted):
         return (accuracy_score(yTrue, yPredicted),
                 precision_score(yTrue, yPredicted, pos_label=0),
-                recall_score(yTrue, yPredicted, pos_label=0), roc_auc_score(yTrue, yPredicted))
+                recall_score(yTrue, yPredicted, pos_label=0))
 
 
     def customSplit(self, allData, seed=0, splitRatio =0.2):
@@ -31,14 +41,29 @@ class Classifier:
         xTestDf = pd.DataFrame()
         yTrainDf = pd.DataFrame()
         yTestDf = pd.DataFrame()
-        for data in allData:
+        for i in range (0, len(allData)):
 
-            xTrain, xTest, yTrain, yTest = train_test_split(data["data"], data["predicted"], test_size=splitRatio, random_state=seed)
+            xTrain, xTest, yTrain, yTest = train_test_split(allData[i]["data"].sort_index(),
+                                                            allData[i]["predicted"].sort_index(), test_size=splitRatio, random_state=seed)
+            self.deleteUnsucsefullTasks(i + 1, xTrain, xTest, yTrain, yTest)
             xTrainDf = pd.concat([xTrainDf, xTrain])
             xTestDf = pd.concat([xTestDf, xTest])
             yTrainDf = pd.concat([yTrainDf, yTrain])
             yTestDf = pd.concat([yTestDf, yTest])
         return [xTrainDf, xTestDf, yTrainDf, yTestDf]
+
+    def deleteUnsucsefullTasks(self,taskNuber, xTrain, xTest, yTrain, yTest):
+        participantsList = config.get('delete', str(taskNuber)).split("\n")
+
+        for participant in participantsList:
+            if participant in xTrain.index:
+                xTrain.drop(participant, inplace=True)
+            if participant in xTest.index:
+                xTest.drop(participant, inplace=True)
+            if participant in yTrain.index:
+                yTrain.drop(participant, inplace=True)
+            if participant in yTest.index:
+                yTest.drop(participant, inplace=True)
 
     def normalizeDataframe(self, df, trainng=True):
         if trainng:

@@ -79,16 +79,16 @@ if __name__ == "__main__":
             data["data"] = data["data"][parser.get('classification', 'columnNames').split("\n")]
 
             data["predicted"] = my_dataset.getPredictedColumnValues()
-            # data["data"].drop(["tester21",
-            #
-            #                    "tester23",
-            #                    "tester24",
-            #                    ], inplace=True)
-            # data["predicted"].drop(["tester21",
-            #
-            #                         "tester23",
-            #                         "tester24",
-            #                         ], inplace=True)
+            data["data"].drop(["tester21",
+
+                               "tester23",
+                               "tester24",
+                               ], inplace=True)
+            data["predicted"].drop(["tester21",
+
+                                    "tester23",
+                                    "tester24",
+                                    ], inplace=True)
 
         dataframes.append(data)
 
