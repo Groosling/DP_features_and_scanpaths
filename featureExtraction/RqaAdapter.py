@@ -30,11 +30,27 @@ def extractRQAFeatures(dataset):
         # reoccurrences
         clusteringDistanceThreshold = int(parser.get('RQA', 'clusteringDistanceThreshold'))
         matrix = ReoccurrenceFunctions.CreateReoccurrenceMatrix(fixations, clusteringDistanceThreshold=clusteringDistanceThreshold)
-        results["reoccurrence"] = ReoccurrenceFunctions.getReoccurrence(matrix)
-        results["reoccurrenceRate"] = ReoccurrenceFunctions.getReoccurrenceRate(matrix)
-        results["reoccurrenceDeterminism"] = ReoccurrenceFunctions.getDeterminism(matrix)
-        results["reoccurrenceLaminarity"] = ReoccurrenceFunctions.getLaminarity(matrix)
-        results["reoccurrenceCORM"] = ReoccurrenceFunctions.getCORM(matrix)
+        try:
+            results["reoccurrence"] = ReoccurrenceFunctions.getReoccurrence(matrix)
+        except:
+            results["reoccurrence"] = 0
+
+        try:
+            results["reoccurrenceRate"] = ReoccurrenceFunctions.getReoccurrenceRate(matrix)
+        except:
+            results["reoccurrenceRate"] = 0
+        try:
+            results["reoccurrenceDeterminism"] = ReoccurrenceFunctions.getDeterminism(matrix)
+        except:
+            results["reoccurrenceDeterminism"] = 0
+        try:
+            results["reoccurrenceLaminarity"] = ReoccurrenceFunctions.getLaminarity(matrix)
+        except:
+            results["reoccurrenceLaminarity"] = 0
+        try:
+            results["reoccurrenceCORM"] = ReoccurrenceFunctions.getCORM(matrix)
+        except:
+            results["reoccurrenceCORM"] = 0
 
         #reccurrences
         timeDelayValue = int(parser.get('RQA', 'timeDelayValue'))
@@ -45,12 +61,23 @@ def extractRQAFeatures(dataset):
                                                                            delaySamples=numTimeDelaySamples)
         recurrenceMatrixData = RecurrenceFunctions.CreateRecurrenceMatrix(phaseSpaceData=fixationsXYPhaseSpaceData,
                                                                           clusteringDistanceThreshold= 	phaseSpaceClusteringThreshold );
-
-        results["recurrence"] = RecurrenceFunctions.getRecurrence(recurrenceMatrixData, numTimeDelaySamples);
-        results["recurrenceRate"] = RecurrenceFunctions.getRecurrenceRate(recurrenceMatrixData, numTimeDelaySamples);
-        (results["recurrenceMeanX"], results["recurrenceMeanY"]) = RecurrenceFunctions.getRecurrenceMean(recurrenceMatrixData, numTimeDelaySamples);
-        (results["recurrenceStandardDeviationX"],results["recurrenceStandardDeviationY"]) = RecurrenceFunctions.getRecurrenceStandardDeviation(recurrenceMatrixData,
-                                                                                                 numTimeDelaySamples);
+        try:
+            results["recurrence"] = RecurrenceFunctions.getRecurrence(recurrenceMatrixData, numTimeDelaySamples)
+        except:
+            results["recurrence"] = 0
+        try:
+            results["recurrenceRate"] = RecurrenceFunctions.getRecurrenceRate(recurrenceMatrixData, numTimeDelaySamples)
+        except:
+            results["recurrenceRate"] = 0
+        try:
+            (results["recurrenceMeanX"], results["recurrenceMeanY"]) = RecurrenceFunctions.getRecurrenceMean(recurrenceMatrixData, numTimeDelaySamples);
+        except:
+            results["recurrenceMeanX"], results["recurrenceMeanY"] = [0,0]
+        try:
+            (results["recurrenceStandardDeviationX"],results["recurrenceStandardDeviationY"]) = RecurrenceFunctions.getRecurrenceStandardDeviation(recurrenceMatrixData,
+                                                                                                 numTimeDelaySamples)
+        except:
+            results["recurrenceStandardDeviationX"], results["recurrenceStandardDeviationY"] = [0,0]
         reoccurrence[key] = results
 
     return reoccurrence

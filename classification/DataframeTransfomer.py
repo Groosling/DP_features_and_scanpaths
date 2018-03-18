@@ -16,6 +16,7 @@ def featuresToDataframe(listOfDictionaryofDictionaries):
     return dataframe
 
 def saveDataframe(dataframe, taskId):
+    dataframe.index.name = "participant"
     dataframe.to_csv(config.get('classification', 'csvPath').format(taskId=str(taskId)))
 
 def loadDataFrame(taskId):

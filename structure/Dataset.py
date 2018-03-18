@@ -45,19 +45,19 @@ class Dataset:
             currentfix = 0
             reader = csv.DictReader(f, delimiter='\t')
             for row in reader:
-                if self.website_name not in row["MediaName"].split(" ")[0] :  # ignore non-recording data point
-                    continue
+                # if self.website_name not in row["MediaName"].split(" ")[0] :  # ignore non-recording data point
+                #     continue
                 if not row["ValidityLeft"] or not row["ValidityRight"] or not row["FixationPointX (MCSpx)"] or not \
                 row["FixationPointY (MCSpx)"]:  # ignore data point with no information
                     continue
-                if row["GazeEventType"] != "Fixation" or currentfix == int(row["FixationIndex"]):
+                if row["GazeEventType"] != "Fixation" or currentfix == int(row["FixationIndex"].split(".")[0]):
                     # if not a fixation or the current fixation
                     continue
                 # clear data on visit of first line of new participant
                 if self.last_participant_name !=row["ParticipantName"]:
                     act_file_data = []
                     self.last_participant_name = row["ParticipantName"]
-                act_file_data.append([str(int(row["FixationIndex"]) - 1),
+                act_file_data.append([str(int(row["FixationIndex"].split(".")[0]) - 1),
                                       row["RecordingTimestamp"],
                                       row["GazeEventDuration"],
                                       row["FixationPointX (MCSpx)"],
@@ -66,7 +66,7 @@ class Dataset:
                                       ])
                 participant_identifier = row["ParticipantName"]
                 self.participants[participant_identifier] = act_file_data
-                currentfix = int(row["FixationIndex"])
+                currentfix = int(row["FixationIndex"].split(".")[0])
         f.close()
 
     def load_aois(self):
@@ -156,7 +156,6 @@ class Dataset:
             d = pd.DataFrame(counter, index=group, columns=['predicted'])
             dataframe = pd.concat([dataframe, d], axis=0)
             counter += 1
-        dataframe.drop(["tester18"], inplace=True)
         return dataframe
 
 

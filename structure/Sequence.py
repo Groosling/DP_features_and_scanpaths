@@ -48,7 +48,7 @@ def createSequencesBasedOnVisualElements(my_dataset):
                         Participants[keys[y]][z][4]) < (
                 ((float(myAoIs[k][3]) - errorRateArea) + (float(myAoIs[k][4]) + 2 * errorRateArea))):
                     tempAoI = tempAoI + myAoIs[k][5]
-                    tempDuration = int(Participants[keys[y]][z][2])
+                    tempDuration = int(float(Participants[keys[y]][z][2]))
 
 
             # my solution compare sum of distances to four corners

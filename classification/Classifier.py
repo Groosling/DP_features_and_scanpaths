@@ -28,13 +28,14 @@ class Classifier:
         self.DF_MEAN = pd.DataFrame()
         self.DF_MIN = pd.DataFrame()
         self.DF_MAX = pd.DataFrame()
+        self.dfDifference = pd.DataFrame()
 
     # function responsible for returning accuracy, precision, recall and roc-auc score
     def getScores(self,yTrue, yPredicted):
         return (accuracy_score(yTrue, yPredicted),
                 precision_score(yTrue, yPredicted, pos_label=0),
                 recall_score(yTrue, yPredicted, pos_label=0))
-
+                # roc_auc_score(yTrue, yPredicted))
 
     def customSplit(self, allData, seed=0, splitRatio =0.2):
         xTrainDf = pd.DataFrame()
@@ -50,6 +51,47 @@ class Classifier:
             xTestDf = pd.concat([xTestDf, xTest])
             yTrainDf = pd.concat([yTrainDf, yTrain])
             yTestDf = pd.concat([yTestDf, yTest])
+        # reduce data to contains same number of elements for each class
+        trainDf =  pd.concat([xTrainDf, yTrainDf], axis=1)
+        testDf = pd.concat([xTestDf, yTestDf], axis=1)
+        print(1)
+        trainHist = trainDf["predicted"].value_counts().sort_values()
+        testHist =  testDf["predicted"].value_counts().sort_values()
+        print("0 = novice, 1 = skilled")
+        print("Values distribution train data: ")
+        print(trainHist)
+        print("Values distribution test data: ")
+        print(testHist)
+        # Same number of data in both classes
+        # # Train data
+        trainSmallerClass = trainHist.index.values[0]
+        trainSmallCount = trainHist.values[0]
+        trainBiggerClass = trainHist.index.values[1]
+        smallDF  = trainDf[trainDf["predicted"] == trainSmallerClass]
+        bigDF  = trainDf[trainDf["predicted"] == trainBiggerClass]
+        bigDF = bigDF.head(n=trainSmallCount)
+        # yTrainDf["predicted"] = smallDF
+        trainDf = pd.DataFrame()
+        trainDf= pd.concat([smallDF,bigDF], axis=0)
+        yTrainDf = pd.DataFrame()
+        yTrainDf["predicted"] = trainDf["predicted"]
+        xTrainDf = pd.DataFrame()
+        xTrainDf = trainDf.drop("predicted", axis=1)
+
+        # Test data
+        testSmallerClass = testHist.index.values[0]
+        testSmallCount = testHist.values[0]
+        testBiggerClass = testHist.index.values[1]
+        smallDF  = testDf[testDf["predicted"] == testSmallerClass]
+        bigDF  = testDf[testDf["predicted"] == testBiggerClass]
+        bigDF = bigDF.head(n=testSmallCount)
+        testDf = pd.DataFrame()
+        testDf= pd.concat([smallDF,bigDF], axis=0)
+        yTestDf = pd.DataFrame()
+        yTestDf["predicted"] = testDf["predicted"]
+        xTestDf = pd.DataFrame()
+        xTestDf = testDf.drop("predicted", axis=1)
+
         return [xTrainDf, xTestDf, yTrainDf, yTestDf]
 
     def deleteUnsucsefullTasks(self,taskNuber, xTrain, xTest, yTrain, yTest):
@@ -70,7 +112,11 @@ class Classifier:
             self.DF_MEAN = df.mean()
             self.DF_MIN = df.min()
             self.DF_MAX = df.max()
-        return (df - self.DF_MEAN) / (self.DF_MAX - self.DF_MIN)
+            self.dfDifference = self.DF_MAX  - self.DF_MIN
+            self.dfDifference[self.dfDifference == 0] = .1
+
+
+        return (df - self.DF_MEAN) / (self.dfDifference)
 
     def featureSelection(self, allData):
         for data in allData:
@@ -89,7 +135,7 @@ class Classifier:
         scores = []
         # allData = self.featureSelection(allData)
         for i in range(5):
-            xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=i*53, splitRatio=0.4)
+            xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=i*53, splitRatio=0.2)
             # clf = KNeighborsClassifier(n_neighbors=1)
             # clf = RandomForestClassifier()
             clf = svm.SVC(kernel='rbf', class_weight='balanced', C=1, gamma=0.0001)
@@ -97,7 +143,7 @@ class Classifier:
             clf.fit(xTrainDf, yTrainDf["predicted"].tolist())
             xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
             dfPredicted = clf.predict(xTestDf)
-            # print(dfPredicted)
+            print(dfPredicted)
             scores.append(self.getScores(yTestDf["predicted"].tolist(), dfPredicted))
             print(self.getScores(yTestDf["predicted"].tolist(), dfPredicted))
         print("Crossvalidation average: ")

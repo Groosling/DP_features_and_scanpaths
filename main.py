@@ -14,8 +14,11 @@ config = ConfigParser()
 with codecs.open('config.ini', 'r', encoding='utf-8') as f:
     config.readfp(f)
 
-
-
+def deleteUnsuccesfulTasksFromDataset(dataset, taskNumber):
+    participantsList = config.get('delete', str(taskNumber)).split("\n")
+    for participant in participantsList:
+        dataset.participants.pop(participant, None)
+    return dataset
 
 if __name__ == "__main__":
     parser = ConfigParser()
@@ -24,7 +27,6 @@ if __name__ == "__main__":
         parser.readfp(f)
 
     # Storage for all loaded data
-    # TODO spravit nech to robi v cykle pre vsetko v konfiguraku
     # Environment in which the eye tracking experiment was performed
     scanpathFilePaths = parser.get('run', 'scanpathFilePaths').split("\n")
     aoiFilePaths = parser.get('run', 'aoiFilePaths').split("\n")
@@ -40,6 +42,7 @@ if __name__ == "__main__":
             'static/images/datasets/template_sta/placeholder.png', # default stuff
             websiteNames[i],
         )
+        my_dataset = deleteUnsuccesfulTasksFromDataset(my_dataset, i+1)
         my_env = Environment(0.5, 60, 1920, 1200, 17)
         listOfDataset = my_dataset.getDatasetDividedIntoGroups()
 
@@ -47,64 +50,70 @@ if __name__ == "__main__":
         allFeatures = []
         dataset  = my_dataset
         if not bool(int(config.get('classification', 'useCsv'))):
-            # # basic features
-            # # """
-            # extractBasicFeatures(dataset, i+1)
-            # features = loadResults()
-            # allFeatures.append(features)
-            # print(features)
-            # # """
-            #
-            # # RQA Features
-            # rqaFeatures = extractRQAFeatures(dataset)
-            # allFeatures.append(rqaFeatures)
+            # basic features
+            # """
+            extractBasicFeatures(dataset, i+1)
+            features = loadResults()
+            allFeatures.append(features)
+            print(features)
+            # """
+
+            # RQA Features
+            rqaFeatures = extractRQAFeatures(dataset)
+            allFeatures.append(rqaFeatures)
 
 
-            # dataframe = featuresToDataframe(allFeatures)
+            dataframe = featuresToDataframe(allFeatures)
             # if 'tester10' in dataframe.index:
             #     dataframe.drop(["tester10"], inplace=True)
 
             """ Scanpath features """
             scanpathFeaturesDf = calculateScanpathFeatures(listOfDataset, my_env)
    #         # scanpathFeaturesDf.drop(["tester10"], inplace=True)
-            # dataframe = pd.concat([dataframe, scanpathFeaturesDf], axis=1)
-            # saveDataframe(dataframe, i+1)
+            dataframe = pd.concat([dataframe, scanpathFeaturesDf], axis=1)
+            saveDataframe(dataframe, i+1)
         else:
             # load
             data["data"] = loadDataFrame(i+1)
             # delete ignored
-            if 'tester18' in data["data"].index:
-                data["data"].drop(["tester18"], inplace=True)
             # select just important columns
             data["data"] = data["data"][parser.get('classification', 'columnNames').split("\n")]
 
+          #   data["data"]  =data["data"].loc[
+          # ["tester08",
+          #  "tester22",
+          #  "tester29",
+          #  "tester34",
+          #  "tester40",
+          #  "tester11",
+          #  "tester17",
+          #  "tester18",
+          #  "tester21",
+          #  "tester24"
+          #  ]
+          #   ]
+
             data["predicted"] = my_dataset.getPredictedColumnValues()
-            data["data"].drop(["tester21",
+            data["predicted"] = data["predicted"].ix[data["data"].index.values.tolist()]
 
-                               "tester23",
-                               "tester24",
-                               ], inplace=True)
-            data["predicted"].drop(["tester21",
 
-                                    "tester23",
-                                    "tester24",
-                                    ], inplace=True)
 
         dataframes.append(data)
 
 
 
     #
-    # """  calculate Correlations"""
-    # dfTrain = pd.DataFrame()
-    # dfPredicted = pd.DataFrame()
-    # for dataframe in dataframes:
-    #     dfTrain = pd.concat([dfTrain, dataframe["data"]], axis=0)
-    #     dfPredicted = pd.concat([dfPredicted, dataframe["predicted"]], axis=0)
+    """  calculate Correlations"""
+    dfTrain = pd.DataFrame()
+    dfPredicted = pd.DataFrame()
+    for dataframe in dataframes:
+        dfTrain = pd.concat([dfTrain, dataframe["data"]], axis=0)
+        dfPredicted = pd.concat([dfPredicted, dataframe["predicted"]], axis=0)
     #
-    #
+    # #
     # correlations = Correlations()
-    # correlations.calculateCorrelations(dfTrain, dfPredicted)
+    # corr = correlations.calculateCorrelationsToPredicted(dfTrain, dfPredicted)
+    # corr1 = sorted(corr.items(), key=lambda x: x[1], reverse=True)
     # correlations.plotBoxplot()
     # correlations.plotPairsSeaborn()
     # columnNames = correlations.getBestColumnNames(10)
@@ -117,8 +126,6 @@ if __name__ == "__main__":
     classifier.testModel(dataframes)
 
     print(5)
-
-    # TODO skusit dostat featury zo scanpathov
 
 
 

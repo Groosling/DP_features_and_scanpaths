@@ -183,11 +183,17 @@ def calculateInterParticipantsScanpathSimilarities(scanpathStrs, substitution_Ma
                                                                                  scanpathStrs[i]['raw_str'],
                                                                                  substitution_Matrix,
                                                                                  aoisPositionsDict))
+    if listOfSimilarities["all"]:
+        listOfSimilarities["min"] =  np.min(listOfSimilarities["all"])
+        listOfSimilarities["max"] =  np.max(listOfSimilarities["all"])
+        listOfSimilarities["avg"] =  np.average(listOfSimilarities["all"])
+        listOfSimilarities["std"] =  np.std(listOfSimilarities["all"])
+    else:
+        listOfSimilarities["min"] = 0
+        listOfSimilarities["max"] = 0
+        listOfSimilarities["avg"] = 0
+        listOfSimilarities["std"] = 0
 
-    listOfSimilarities["min"] =  np.min(listOfSimilarities["all"])
-    listOfSimilarities["max"] =  np.max(listOfSimilarities["all"])
-    listOfSimilarities["avg"] =  np.average(listOfSimilarities["all"])
-    listOfSimilarities["std"] =  np.std(listOfSimilarities["all"])
     return listOfSimilarities
 
 def calcSubstitutionMatrix(aois):
