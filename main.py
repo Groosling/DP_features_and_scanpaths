@@ -124,7 +124,7 @@ if __name__ == "__main__":
         # """ train and test model """
     classifier= Classifier()
     classifier.testModel(dataframes)
-
+    classifier.correalationsAfterDataSplittingAnReduction(dataframes)
     print(5)
 
 

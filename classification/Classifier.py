@@ -63,7 +63,7 @@ class Classifier:
         print("Values distribution test data: ")
         print(testHist)
         # Same number of data in both classes
-        # # Train data
+        # Train data
         trainSmallerClass = trainHist.index.values[0]
         trainSmallCount = trainHist.values[0]
         trainBiggerClass = trainHist.index.values[1]
@@ -139,6 +139,7 @@ class Classifier:
             # clf = KNeighborsClassifier(n_neighbors=1)
             # clf = RandomForestClassifier()
             clf = svm.SVC(kernel='rbf', class_weight='balanced', C=1, gamma=0.0001)
+            # clf = svm.SVC(kernel='rbf', class_weight={1:1.3, 0:1}, C=1, gamma=0.0001)
             xTrainDf = self.normalizeDataframe(xTrainDf, trainng=True)
             clf.fit(xTrainDf, yTrainDf["predicted"].tolist())
             xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
@@ -149,3 +150,14 @@ class Classifier:
         print("Crossvalidation average: ")
         print("------------------------")
         print(*map(mean, zip(*scores)))
+
+    def correalationsAfterDataSplittingAnReduction(self, allData):
+        xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=0 * 53, splitRatio=0.2)
+        xTrainDf = self.normalizeDataframe(xTrainDf, trainng=True)
+        xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
+        trainDf = pd.concat([xTrainDf,xTestDf])
+        testDf = pd.concat([yTrainDf,yTestDf])
+        allDf = pd.concat([trainDf, testDf], axis=1)
+        tmp = allDf.corr(method='spearman')["predicted"]
+        correlations = tmp.drop("predicted").abs().sort_values(ascending=False)
+        print(correlations)
