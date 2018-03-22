@@ -127,8 +127,11 @@ if __name__ == "__main__":
     classifier.correalationsAfterDataSplittingAnReduction(dataframes)
     print(5)
 
-
-
+    # shuflfe data ppo nacitani .. pre kazdu ulohu rovnako.. ale by neboli usporiadany, ze sami zaciatocnici a potom sami zrucni
+    # leave one out
+    # logisticka regresia skusit aj tu ....
+    # skusit shuffle
+    # skontrolovat ci to dobre splituje
 
 
 

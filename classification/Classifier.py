@@ -1,14 +1,16 @@
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn import linear_model, datasets
 from sklearn.model_selection import cross_val_score
 from sklearn import svm
 from scipy.stats import zscore
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from random import shuffle
 from statistics import mean
 import itertools
-
+import operator
 import math
 import numpy as np
 import pandas as pd
@@ -29,6 +31,7 @@ class Classifier:
         self.DF_MIN = pd.DataFrame()
         self.DF_MAX = pd.DataFrame()
         self.dfDifference = pd.DataFrame()
+        self.weights = {}
 
     # function responsible for returning accuracy, precision, recall and roc-auc score
     def getScores(self,yTrue, yPredicted):
@@ -51,46 +54,6 @@ class Classifier:
             xTestDf = pd.concat([xTestDf, xTest])
             yTrainDf = pd.concat([yTrainDf, yTrain])
             yTestDf = pd.concat([yTestDf, yTest])
-        # reduce data to contains same number of elements for each class
-        trainDf =  pd.concat([xTrainDf, yTrainDf], axis=1)
-        testDf = pd.concat([xTestDf, yTestDf], axis=1)
-        print(1)
-        trainHist = trainDf["predicted"].value_counts().sort_values()
-        testHist =  testDf["predicted"].value_counts().sort_values()
-        print("0 = novice, 1 = skilled")
-        print("Values distribution train data: ")
-        print(trainHist)
-        print("Values distribution test data: ")
-        print(testHist)
-        # Same number of data in both classes
-        # Train data
-        trainSmallerClass = trainHist.index.values[0]
-        trainSmallCount = trainHist.values[0]
-        trainBiggerClass = trainHist.index.values[1]
-        smallDF  = trainDf[trainDf["predicted"] == trainSmallerClass]
-        bigDF  = trainDf[trainDf["predicted"] == trainBiggerClass]
-        bigDF = bigDF.head(n=trainSmallCount)
-        # yTrainDf["predicted"] = smallDF
-        trainDf = pd.DataFrame()
-        trainDf= pd.concat([smallDF,bigDF], axis=0)
-        yTrainDf = pd.DataFrame()
-        yTrainDf["predicted"] = trainDf["predicted"]
-        xTrainDf = pd.DataFrame()
-        xTrainDf = trainDf.drop("predicted", axis=1)
-
-        # Test data
-        testSmallerClass = testHist.index.values[0]
-        testSmallCount = testHist.values[0]
-        testBiggerClass = testHist.index.values[1]
-        smallDF  = testDf[testDf["predicted"] == testSmallerClass]
-        bigDF  = testDf[testDf["predicted"] == testBiggerClass]
-        bigDF = bigDF.head(n=testSmallCount)
-        testDf = pd.DataFrame()
-        testDf= pd.concat([smallDF,bigDF], axis=0)
-        yTestDf = pd.DataFrame()
-        yTestDf["predicted"] = testDf["predicted"]
-        xTestDf = pd.DataFrame()
-        xTestDf = testDf.drop("predicted", axis=1)
 
         return [xTrainDf, xTestDf, yTrainDf, yTestDf]
 
@@ -118,46 +81,91 @@ class Classifier:
 
         return (df - self.DF_MEAN) / (self.dfDifference)
 
-    def featureSelection(self, allData):
-        for data in allData:
-            data["data"].drop(["tester21",
 
-                               "tester23",
-                               "tester24"
-                              ], inplace=True)
 
-            data["predicted"].drop(["tester21", "tester23", "tester24"], inplace=True)
-        # allData = allData[:1]
-        return allData
+    def getAllParticipants(self):
+        allParticipants = []
+        counter = 1
+        while counter:
+            try:
+                allParticipants.extend(config.get('participants', 'group' + str(counter)).split('\n'))
+                counter += 1
+            except:
+                break
+        return allParticipants
+
+
+    def splitDataFor10CrosValidation(self, iteration, splits, participants, allData):
+        testParticipants = splits[iteration]
+        trainParticipants = participants.copy()
+        for item in testParticipants:
+            trainParticipants.remove(item)
+
+        dfTrain = None
+        dfTest =  None
+        for i in range(0, len(allData)):
+            data = pd.concat([allData[i]["data"], allData[i]["predicted"]], axis=1)
+            testDf = data.loc[data.index.intersection(testParticipants)]
+            trainDf = data.loc[data.index.intersection(trainParticipants)]
+            if dfTrain is not None and dfTest is not None:
+                dfTrain =  pd.concat([dfTrain, trainDf], axis=0)
+                dfTest =  pd.concat([dfTest, testDf], axis=0)
+            else:
+                dfTrain = trainDf
+                dfTest =testDf
+        yTrainDf = pd.DataFrame()
+        yTestDf =  pd.DataFrame()
+        yTrainDf["predicted"] = dfTrain.pop("predicted")
+        yTestDf["predicted"] = dfTest.pop("predicted")
+        return dfTrain, dfTest, yTrainDf, yTestDf
 
 
     def testModel(self, allData):
+        participants = self.getAllParticipants()
+        shuffle(participants)
+        splits = np.array_split(participants, 10)
         scores = []
-        # allData = self.featureSelection(allData)
-        for i in range(5):
-            xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=i*53, splitRatio=0.2)
-            # clf = KNeighborsClassifier(n_neighbors=1)
-            # clf = RandomForestClassifier()
-            clf = svm.SVC(kernel='rbf', class_weight='balanced', C=1, gamma=0.0001)
-            # clf = svm.SVC(kernel='rbf', class_weight={1:1.3, 0:1}, C=1, gamma=0.0001)
-            xTrainDf = self.normalizeDataframe(xTrainDf, trainng=True)
+
+        importance = {}
+        for i in range(10):
+            xTrainDf, xTestDf, yTrainDf, yTestDf = self.splitDataFor10CrosValidation(i, splits, participants, allData)
+            clf = linear_model.LogisticRegression(C=1e5)
             clf.fit(xTrainDf, yTrainDf["predicted"].tolist())
-            xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
             dfPredicted = clf.predict(xTestDf)
             print(dfPredicted)
             scores.append(self.getScores(yTestDf["predicted"].tolist(), dfPredicted))
             print(self.getScores(yTestDf["predicted"].tolist(), dfPredicted))
-        print("Crossvalidation average: ")
-        print("------------------------")
+            # print out importance of logistic regresion
+            rfImportances = pd.DataFrame()
+            rfImportances["name"] = xTrainDf.columns.values.tolist()
+            rfImportances["importance"] = clf.coef_[0].tolist()
+            result = rfImportances.sort_values(by=['importance'], ascending=False)
+
+            # importance over all interations
+            for index, row in result.iterrows():
+                if row['name'] not in importance.keys():
+                    importance[row['name']] = []
+                importance[row['name']].append(row['importance'])
+        for key in importance.keys():
+            importance[key] = sum(importance[key]) / float(len(importance[key]))
+        sorted_x = sorted(importance.items(), key=operator.itemgetter(1), reverse=True)
+
         print(*map(mean, zip(*scores)))
+        print("Logistic regresion weights:")
+        for s in sorted_x:
+            print(*s)
+
+
+
 
     def correalationsAfterDataSplittingAnReduction(self, allData):
         xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=0 * 53, splitRatio=0.2)
-        xTrainDf = self.normalizeDataframe(xTrainDf, trainng=True)
-        xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
+#         xTrainDf = self.normalizeDataframe(xTrainDf, trainng=True)
+#         xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
         trainDf = pd.concat([xTrainDf,xTestDf])
         testDf = pd.concat([yTrainDf,yTestDf])
         allDf = pd.concat([trainDf, testDf], axis=1)
         tmp = allDf.corr(method='spearman')["predicted"]
         correlations = tmp.drop("predicted").abs().sort_values(ascending=False)
         print(correlations)
+
