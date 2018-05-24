@@ -19,7 +19,7 @@ def deleteUnsuccesfulTasksFromDataset(dataset, taskNumber):
     for participant in participantsList:
         dataset.participants.pop(participant, None)
     return dataset
-
+columnsToDrop =set(["numfixations", "sumabspathangles", "sumrelpathangles", "sumfixationduration", "numsamples", "sumsaccadeduration", "sumpathdistance", "length"])
 if __name__ == "__main__":
     parser = ConfigParser()
     # Open the file with the correct encoding
@@ -50,17 +50,17 @@ if __name__ == "__main__":
         allFeatures = []
         dataset  = my_dataset
         if not bool(int(config.get('classification', 'useCsv'))):
-            # basic features
-            # """
-            extractBasicFeatures(dataset, i+1)
-            features = loadResults()
-            allFeatures.append(features)
-            print(features)
-            # """
-
-            # RQA Features
-            rqaFeatures = extractRQAFeatures(dataset)
-            allFeatures.append(rqaFeatures)
+            # # basic features
+            # # """
+            # extractBasicFeatures(dataset, i+1)
+            # features = loadResults()
+            # allFeatures.append(features)
+            # print(features)
+            # # """
+            #
+            # # RQA Features
+            # rqaFeatures = extractRQAFeatures(dataset)
+            # allFeatures.append(rqaFeatures)
 
 
             dataframe = featuresToDataframe(allFeatures)
@@ -70,62 +70,59 @@ if __name__ == "__main__":
             """ Scanpath features """
             scanpathFeaturesDf = calculateScanpathFeatures(listOfDataset, my_env)
    #         # scanpathFeaturesDf.drop(["tester10"], inplace=True)
-            dataframe = pd.concat([dataframe, scanpathFeaturesDf], axis=1)
-            saveDataframe(dataframe, i+1)
+   #          dataframe = pd.concat([dataframe, scanpathFeaturesDf], axis=1)
+   #          saveDataframe(dataframe, i+1)
         else:
             # load
             data["data"] = loadDataFrame(i+1)
             # delete ignored
             # select just important columns
             data["data"] = data["data"][parser.get('classification', 'columnNames').split("\n")]
-
-          #   data["data"]  =data["data"].loc[
-          # ["tester08",
-          #  "tester22",
-          #  "tester29",
-          #  "tester34",
-          #  "tester40",
-          #  "tester11",
-          #  "tester17",
-          #  "tester18",
-          #  "tester21",
-          #  "tester24"
-          #  ]
-          #   ]
-
-            data["predicted"] = my_dataset.getPredictedColumnValues()
-            data["predicted"] = data["predicted"].ix[data["data"].index.values.tolist()]
+            data["data"].drop(set(columnsToDrop).intersection(data["data"].columns.values), axis=1, inplace=True)
 
 
 
-        dataframes.append(data)
-
-
-
+    #         data["predicted"] = my_dataset.getPredictedColumnValues()
+    #         data["predicted"] = data["predicted"].ix[data["data"].index.values.tolist()]
     #
-    """  calculate Correlations"""
-    dfTrain = pd.DataFrame()
-    dfPredicted = pd.DataFrame()
-    for dataframe in dataframes:
-        dfTrain = pd.concat([dfTrain, dataframe["data"]], axis=0)
-        dfPredicted = pd.concat([dfPredicted, dataframe["predicted"]], axis=0)
+    #
+    #
+    #     dataframes.append(data)
+    #
+    #
     #
     # #
+    # """  calculate Correlations"""
     # correlations = Correlations()
+    # correlations.featureEngineering(dataframes)
+    #
+    # dfTrain = pd.DataFrame()
+    # dfPredicted = pd.DataFrame()
+    # for dataframe in dataframes:
+    #     dfTrain = pd.concat([dfTrain, dataframe["data"]], axis=0)
+    #     dfPredicted = pd.concat([dfPredicted, dataframe["predicted"]], axis=0)
+    # #
+    # # #
+    #
+    #
     # corr = correlations.calculateCorrelationsToPredicted(dfTrain, dfPredicted)
     # corr1 = sorted(corr.items(), key=lambda x: x[1], reverse=True)
-    # correlations.plotBoxplot()
-    # correlations.plotPairsSeaborn()
-    # columnNames = correlations.getBestColumnNames(10)
-    # dataframe = dataframe[columnNames]
-
-
-
-        # """ train and test model """
-    classifier= Classifier()
-    classifier.testModel(dataframes)
-    classifier.correalationsAfterDataSplittingAnReduction(dataframes)
-    print(5)
+    # interCorr  =correlations.calculateInterAttributesCorrelations(dfTrain)
+    # print(corr1)
+    # for cor in corr1: print(cor[0] + " " + str(cor[1]))
+    #
+    # notInterCorrelated = correlations.deleteHighlyCorrelatedAttributes(interCorr,corr)
+    # print(notInterCorrelated)
+    # dataframes = correlations.keepJustParticularColumnsInAllData(dataframes,notInterCorrelated)
+    #
+    #
+    #     # """ train and test model """
+    # classifier= Classifier()
+    # classifier.testModel(dataframes)
+    # # classifier.correalationsAfterDataSplitting(dataframes)
+    #
+    # print(5)
+    # END
 
     # shuflfe data ppo nacitani .. pre kazdu ulohu rovnako.. ale by neboli usporiadany, ze sami zaciatocnici a potom sami zrucni
     # leave one out
@@ -137,9 +134,10 @@ if __name__ == "__main__":
 
 
 
-
-
-
+# spravit to nech to ide voci predikovanej premmenej - precision recall - podla novacikov
+# korelacnu precisiona  recall pre obe triedy a pre obe spriemerovat samostatne
+# popisat aj to, ze sa tie najlepsie atributy v crosvalidacii nemenia
+# pri popise vzorky - pozriet sa na distribuciu webovje gramotnosti ... a azla akos a ohodnotili ...
 
 
 

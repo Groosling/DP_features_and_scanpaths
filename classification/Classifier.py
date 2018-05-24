@@ -37,7 +37,10 @@ class Classifier:
     def getScores(self,yTrue, yPredicted):
         return (accuracy_score(yTrue, yPredicted),
                 precision_score(yTrue, yPredicted, pos_label=0),
-                recall_score(yTrue, yPredicted, pos_label=0))
+                recall_score(yTrue, yPredicted, pos_label=0),
+                precision_score(yTrue, yPredicted, pos_label=1),
+                recall_score(yTrue, yPredicted, pos_label=1)
+                )
                 # roc_auc_score(yTrue, yPredicted))
 
     def customSplit(self, allData, seed=0, splitRatio =0.2):
@@ -115,6 +118,7 @@ class Classifier:
                 dfTest =testDf
         yTrainDf = pd.DataFrame()
         yTestDf =  pd.DataFrame()
+        # TODO shuffle rows
         yTrainDf["predicted"] = dfTrain.pop("predicted")
         yTestDf["predicted"] = dfTest.pop("predicted")
         return dfTrain, dfTest, yTrainDf, yTestDf
@@ -158,8 +162,17 @@ class Classifier:
 
 
 
-    def correalationsAfterDataSplittingAnReduction(self, allData):
-        xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=0 * 53, splitRatio=0.2)
+    def correalationsAfterDataSplitting(self, allData):
+
+        participants = self.getAllParticipants()
+        shuffle(participants)
+        splits = np.array_split(participants, 10)
+        scores = []
+
+        print("Correlations:")
+        print("-------------")
+        xTrainDf, xTestDf, yTrainDf, yTestDf  = self.splitDataFor10CrosValidation(0, splits, participants, allData)
+        # xTrainDf, xTestDf, yTrainDf, yTestDf = self.customSplit(allData, seed=0 * 53, splitRatio=0.2)
 #         xTrainDf = self.normalizeDataframe(xTrainDf, trainng=True)
 #         xTestDf = self.normalizeDataframe(xTestDf, trainng=False)
         trainDf = pd.concat([xTrainDf,xTestDf])
@@ -169,3 +182,4 @@ class Classifier:
         correlations = tmp.drop("predicted").abs().sort_values(ascending=False)
         print(correlations)
 
+ # TODO shuffle rows after split

@@ -81,7 +81,7 @@ class Dataset:
         aoi_file = fo.read()
         file_lines = aoi_file.split('\n')
 
-        # Read the file by lines and remember Identifier, X-from, X-length, Y-from, Y-length, ShortID
+        # Read the file by lines and remember Identifier, X-from_coordinate, X-offset, Y-from_coordinate, Y-offset, ShortID
         for x in range(0, len(file_lines)):
             temp = file_lines[x].split(' ')
             self.aois.append([temp[0], temp[1], temp[2], temp[3], temp[4], temp[5]])

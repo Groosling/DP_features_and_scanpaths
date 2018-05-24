@@ -1,7 +1,7 @@
 from structure import Sequence
 
 from operator import itemgetter, attrgetter
-from algorithm.StringEditAlgs import *
+from commonScanpath.StringEditAlgs import *
 from configparser import ConfigParser
 import codecs
 
@@ -150,10 +150,10 @@ class Dotplot:
         res_data = calcSimilarityForDataset(mySequences, list(self.findCommonSequence(stringSequences)),self.my_dataset.aois)
         print("DOTPLOT")
         print("-----------------------------------------------")
-        print(res_data["fixations"])
+        # print(res_data["fixations"])
 
-        # for keys,values in res_data.items():
-        #     print(keys)
-        #     print(values)
+        for keys,values in res_data.items():
+            print(keys)
+            print(values)
         res_data["sequences"] = mySequences
         return res_data

@@ -2,7 +2,7 @@ from __future__ import division
 
 import json
 
-from algorithm.StringEditAlgs import *
+from commonScanpath.StringEditAlgs import *
 from structure.Dataset import *
 from structure.Environment import *
 from structure.Sequence import *
@@ -369,8 +369,8 @@ class Sta:
     def printResults(self, results):
         print("STA")
         print("-----------------------------------------------")
-        print(results["fixations"])
-        # for keys,values in results.items():
-        #     print(keys)
-        #     print(values)
+        # print(results["fixations"])
+        for keys,values in results.items():
+            print(keys)
+            print(values)
 

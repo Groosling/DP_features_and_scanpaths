@@ -1,7 +1,7 @@
 import operator
 
 from structure import Sequence
-from algorithm.StringEditAlgs import *
+from commonScanpath.StringEditAlgs import *
 
 class Position_based_Weighted_Models:
     def __init__(self, my_dataset):
@@ -74,10 +74,10 @@ class Position_based_Weighted_Models:
         res_data = calcSimilarityForDataset(mySequences, list(result),self.my_dataset.aois)
         print("PBWM")
         print("-----------------------------------------------")
-        print(res_data["fixations"])
-        # for keys,values in res_data.items():
-        #     print(keys)
-        #     print(values)
+        # print(res_data["fixations"])
+        for keys,values in res_data.items():
+            print(keys)
+            print(values)
         res_data["sequences"] = mySequences
         return res_data
         # return result[:len(result)-1]

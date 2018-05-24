@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas import Series
 import seaborn as sns
-
+from sklearn import preprocessing as pp
 from configparser import ConfigParser
 import codecs
 
@@ -19,6 +19,10 @@ class Correlations:
     def deleteHighlyCorrelatedAttributes(self, dfInterAttributesCorrelation, dictCorrTopredicted):
         resultColumns = dict(dictCorrTopredicted)
         threshold = float(config.get("correlations", "interAttributesCorrThreshold"))
+        print("Inter correlation threshold")
+        print("----------------------------")
+        print(str(threshold))
+
         for index, row in dfInterAttributesCorrelation.iterrows():
             for column in dfInterAttributesCorrelation:
                 # if comapring same attributes... skip
@@ -29,6 +33,10 @@ class Correlations:
                     resultColumns.pop(column, None) if dictCorrTopredicted[index] > dictCorrTopredicted[column] else resultColumns.pop(index, None)
         return list(resultColumns.keys())
 
+    def keepJustParticularColumnsInAllData(self, dataframes, columns):
+        for i in range(0, len(dataframes)):
+            dataframes[i]["data"] = dataframes[i]["data"][columns]
+        return dataframes
 
     def calculateInterAttributesCorrelations(self, df):
         correlations = df.corr(method='spearman').abs();
@@ -72,3 +80,13 @@ class Correlations:
 
     def getBestColumnNames(self, n):
         return self.sortedCorrelationsName[:n]
+
+    def featureEngineering(self, dataframes):
+        poly = pp.PolynomialFeatures(2)
+        for i in range(0, len(dataframes)):
+            rowNames = dataframes[i]["data"].index.values.tolist()
+            res = poly.fit_transform(dataframes[i]["data"])
+            columns = poly.get_feature_names(dataframes[i]["data"].columns.values.tolist())
+            dataframes[i]["data"] = pd.DataFrame(res, index=rowNames)
+            dataframes[i]["data"].columns = columns
+            dataframes[i]["data"].drop("1",  axis=1, inplace=True)

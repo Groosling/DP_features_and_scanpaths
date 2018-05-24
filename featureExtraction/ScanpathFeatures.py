@@ -1,7 +1,7 @@
-from algorithm.Dotplot import *
-from algorithm.Position_based_Weighted_Models import *
-from algorithm.Spam import *
-from algorithm.Sta import *
+from commonScanpath.Dotplot import *
+from commonScanpath.Position_based_Weighted_Models import *
+from commonScanpath.Spam import *
+from commonScanpath.Sta import *
 import pandas as pd
 
 from configparser import ConfigParser
@@ -74,7 +74,7 @@ def dotplotAlgorithm(my_dataset, myEnv):
 
 def applyCommonScanpathAlgorithm(my_dataset, myEnv, mod):
     """
-    Apply algorithm for extraction of common scanpath
+    Apply commonScanpath for extraction of common scanpath
     Args:
         my_dataset: dataset
         mod:     1 apply STA

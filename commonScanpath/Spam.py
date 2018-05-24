@@ -1,7 +1,7 @@
 import os
 from subprocess import check_output
 from structure.Sequence import *
-from algorithm.StringEditAlgs import *
+from commonScanpath.StringEditAlgs import *
 
 
 from configparser import ConfigParser
@@ -112,10 +112,10 @@ class Spam:
         maxSimilarityItem = max(common_scanpaths, key=lambda x: x['similarity']['OverAllSimilarity'])
         print("SPAM")
         print("-----------------------------------------------")
-        print( maxSimilarityItem['similarity']["fixations"])
-        # for keys,values in maxSimilarityItem['similarity'].items():
-        #     print(keys)
-        #     print(values)
+        # print( maxSimilarityItem['similarity']["fixations"])
+        for keys,values in maxSimilarityItem['similarity'].items():
+            print(keys)
+            print(values)
         maxSimilarityItem['similarity']["sequences"] = mySequences
         return maxSimilarityItem['similarity']
 
